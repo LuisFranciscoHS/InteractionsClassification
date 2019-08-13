@@ -1,0 +1,4 @@
+pip==19.2.2
+pylint==2.3.1
+setuptools==40.8.0
+requests==2.22.0

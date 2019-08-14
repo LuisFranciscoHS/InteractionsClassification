@@ -1,4 +1,5 @@
 config.txt
+config*
 
 # Data files
 data/

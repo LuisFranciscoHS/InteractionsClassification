@@ -1,95 +1,66 @@
 #%%
-# Read configuration variables
+import os
+import requests
+import subprocess
+import config
+import sys
 
-path_config = "config.txt"
-variables = {}
-file_config = open(path_config, "r")
-for line in file_config:
-    (key, value) = line.split()
-    variables[key] = value
-print(variables)
+#sys.path.append("src/")
+
+# Read configuration variables
+config = config.read_config()
 
 #%%
 # Download the protein list from SwissProt
-import os
-path_swissprot_proteins = "data/UniProt/swissprot_human_proteins.tab"
-
-if not os.path.exists(path_swissprot_proteins):
+if not os.path.exists(config['PATH_SWISSPROT_PROTEINS']):
     print("Downloading protein list from SwissProt...")
-    os.makedirs(os.path.dirname(path_swissprot_proteins), exist_ok=True)
-    import requests
-    request_result = requests.get("https://www.uniprot.org/uniprot/?query=reviewed:yes+AND+organism:9606&columns=id&format=tab")
+    os.makedirs(os.path.dirname(config['PATH_SWISSPROT_PROTEINS']), exist_ok=True)
+    request_result = requests.get(config['URL_SWISSPROT_PROTEINS'])
 
-    with open(path_swissprot_proteins, "w") as file_swissprot_proteins:
+    with open(config['PATH_SWISSPROT_PROTEINS'], "w") as file_swissprot_proteins:
         file_swissprot_proteins.write(request_result.text)
 
 print("SwissProt list READY")
 
 #%%
-
+# Collect features of each Reactome interaction
 # Run PathwayMatcher to get interactions in Reactome
-path_pathwaymatcher = "tools/PathwayMatcher.jar"
+if not os.path.exists(config['PATH_REACTOME'] + config['REACTOME_PPI']):
 
-if not os.path.exists(path_pathwaymatcher):
+    if not os.path.exists(config['PATH_PATHWAYMATCHER']):
         print("Downloading PathwayMatcher...")
-        url_pathwaymatcher = "https://github.com/PathwayAnalysisPlatform/PathwayMatcher/releases/download/1.9.1/PathwayMatcher.jar"
+        request_result = requests.get(config['URL_PATHWAYMATCHER'])
+        os.makedirs(os.path.dirname(config['PATH_PATHWAYMATCHER']), exist_ok=True)
+        open(config['PATH_PATHWAYMATCHER'], 'wb').write(request_result.content)
 
-        r = requests.get(url_pathwaymatcher)
-        os.makedirs(os.path.dirname(path_pathwaymatcher), exist_ok=True)
-        open(path_pathwaymatcher, 'wb').write(r.content)
+    print("PathwayMatcher READY")
 
-print("PathwayMatcher READY")
+    subprocess.run(f"java -jar {config['PATH_PATHWAYMATCHER']} match-uniprot -i {config['PATH_SWISSPROT_PROTEINS']} -o {config['PATH_REACTOME']} -gu",
+            capture_output=False)
 
-import subprocess
-subprocess.run("java -jar tools/PathwayMatcher.jar match-uniprot -i data/UniProt/swissprot_human_proteins.tab -o data/Reactome/ -gu",
-    capture_output=False)
+# Remove extra PathwayMatcher result files
+extra_files = "analysis.tsv", "proteinExternalEdges.tsv", "proteinVertices.tsv", "search.tsv"
+for extra_file in extra_files:
+    if os.path.exists(f"{config['PATH_REACTOME']}{extra_file}"):
+        os.remove(f"{config['PATH_REACTOME']}{extra_file}")
 
 print("Reactome interactions READY")
 
 #%%
-
-# Collect features of each Reactome interaction
+import biogrid
+import conversions
 
 # Biogrid: if there is a reported humap PPI
+if not os.path.exists(config['PATH_BIOGRID'] + config['BIOGRID_PPI']):
+    print("Creating biogrid protein interaction file...")
+    if not os.path.exists(config['PATH_BIOGRID'] + config['BIOGRID_ENTREEZ_TO_UNIPROT']):
+        biogrid.create_gene_to_protein_mapping()
 
-## Download Biogrid human gene interactions
+    # Traverse gene interactions and convert them to protein interactions
+    #     
 
-import os
-path_biogrid_gene_interactions = "data/Biogrid/human_gene_interactions.tab"
-
-if not os.path.exists(path_biogrid_gene_interactions):
-    print("Downloading Biogrid human gene interactions...")
-    os.makedirs(os.path.dirname(path_biogrid_gene_interactions), exist_ok=True)
-    import requests
-    request_result = requests.get("https://www.uniprot.org/uniprot/?query=reviewed:yes+AND+organism:9606&columns=id&format=tab")
-
-    with open(path_swissprot_proteins, "w") as file_swissprot_proteins:
-        file_swissprot_proteins.write(request_result.text)
-
-print("Biogrid gene interactions READY")
-
-#%%
-
-## Convert Biogrid interactions to protein interactions
-import urllib.parse
-import urllib.request
-
-url = 'https://www.uniprot.org/uploadlists/'
-
-params = {
-    'from': 'P_ENTREZGENEID',
-    'to': 'ACC',
-    'format': 'tab',
-    'query': '2318\n84665\n88\n90\n339\n6416',
-    'reviewed': 'yes'
-}
-
-data = urllib.parse.urlencode(params)
-data = data.encode('utf-8')
-req = urllib.request.Request(url, data)
-with urllib.request.urlopen(req) as f:
-   response = f.read()
-print(response.decode('utf-8'))
 print("Biogrid protein interactions READY")
 
 #%%
+
+## Check which Reactome interactions appear in Biogrid for human

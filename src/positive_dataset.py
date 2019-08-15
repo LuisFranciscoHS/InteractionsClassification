@@ -1,17 +1,20 @@
-#%%
+#%% Load modules and configuration
 import os
 import requests
 import subprocess
-import config
 import sys
+from collections import defaultdict
 
-#sys.path.append("src/")
+if not "src/" in sys.path:
+    sys.path.append("src/")
 
-# Read configuration variables
+import config
+import biogrid
+import conversions
+
 config = config.read_config()
 
-#%%
-# Download the protein list from SwissProt
+#%% Download the protein list from SwissProt
 if not os.path.exists(config['PATH_SWISSPROT_PROTEINS']):
     print("Downloading protein list from SwissProt...")
     os.makedirs(os.path.dirname(config['PATH_SWISSPROT_PROTEINS']), exist_ok=True)
@@ -22,8 +25,7 @@ if not os.path.exists(config['PATH_SWISSPROT_PROTEINS']):
 
 print("SwissProt list READY")
 
-#%%
-# Collect features of each Reactome interaction
+#%% Collect features of each Reactome interaction
 # Run PathwayMatcher to get interactions in Reactome
 if not os.path.exists(config['PATH_REACTOME'] + config['REACTOME_PPI']):
 
@@ -44,23 +46,56 @@ for extra_file in extra_files:
     if os.path.exists(f"{config['PATH_REACTOME']}{extra_file}"):
         os.remove(f"{config['PATH_REACTOME']}{extra_file}")
 
+# Read unique interaction pairs (proteins in lexicographyc order)
+print("Reading unique interactions...")
+reactome_ppis = {}
+for interaction in open(config['PATH_REACTOME'] + config['REACTOME_PPI']):
+    parts = interaction.split()
+    from_id, to_id = parts[0], parts[1]
+    if from_id > to_id:
+        from_id, to_id = to_id, from_id
+    if not from_id in reactome_ppis.keys():
+        reactome_ppis[from_id] = {to_id}
+    else:
+        reactome_ppis[from_id].add(to_id)
+
+# Convert each set to tuple
+for key in reactome_ppis.keys():
+    reactome_ppis[key] = tuple(reactome_ppis[key])
+
 print("Reactome interactions READY")
 
-#%%
-import biogrid
-import conversions
-
-# Biogrid: if there is a reported humap PPI
+#%% Biogrid: if there is a reported humap PPI
 if not os.path.exists(config['PATH_BIOGRID'] + config['BIOGRID_PPI']):
     print("Creating biogrid protein interaction file...")
-    if not os.path.exists(config['PATH_BIOGRID'] + config['BIOGRID_ENTREEZ_TO_UNIPROT']):
-        biogrid.create_gene_to_protein_mapping()
+    if not os.path.exists(config['PATH_BIOGRID'] + config['BIOGRID_ENTREZ_TO_UNIPROT']):
+        biogrid.create_gene_to_protein_mapping(
+            config['PATH_BIOGRID'],
+            config['BIOGRID_GI'], 
+            config['URL_BIOGRID_ALL'],
+            config['BIOGRID_ALL'],
+            config['BIOGRID_ENTREZ_TO_UNIPROT'],
+            config['ID_MAPPING_BATCH_SIZE']
+        )
+    biogrid_gi = biogrid.read_gene_interactions(config['PATH_BIOGRID'], config['BIOGRID_GI'])
+    entrez_to_uniprot = biogrid.read_entrez_to_uniprot_mapping(config['PATH_BIOGRID'], config['BIOGRID_ENTREZ_TO_UNIPROT'])
+    
+    # Create dictionary with converted unique protein pairs
+    biogrid_ppi = biogrid.create_ppi_dictionary(biogrid_gi, entrez_to_uniprot)
 
-    # Traverse gene interactions and convert them to protein interactions
-    #     
-
+    file_biogrid_ppi = open(config['PATH_BIOGRID'] + config['BIOGRID_PPI'], 'w')
+    for protein, interactors in biogrid_ppi.items():
+        for interactor in interactors:
+            file_biogrid_ppi.write(f"{protein}\t{interactor}\n")
+    file_biogrid_ppi.close()
+    
 print("Biogrid protein interactions READY")
 
 #%%
 
 ## Check which Reactome interactions appear in Biogrid for human
+# Traverse gene interactions and convert them to protein interactions
+    
+for protein, interactors  in reactome_ppis.items():
+    for interactor in interactors:
+        print(f"{protein} --> {interactor}")

@@ -4,6 +4,7 @@ import requests
 import subprocess
 import sys
 from collections import defaultdict
+import numpy as np
 
 if not "src/" in sys.path:
     sys.path.append("src/")
@@ -11,8 +12,17 @@ if not "src/" in sys.path:
 import config
 import biogrid
 import conversions
+import dictionaries
 
 config = config.read_config()
+
+#%% Set correct working directory
+# import os
+# try:
+# 	os.chdir(os.path.join(os.getcwd(), '..\\..\Project\InteractionsClassification'))
+# 	print(os.getcwd())
+# except:
+# 	pass
 
 #%% Download the protein list from SwissProt
 if not os.path.exists(config['PATH_SWISSPROT_PROTEINS']):
@@ -50,14 +60,10 @@ for extra_file in extra_files:
 print("Reading unique interactions...")
 reactome_ppis = {}
 for interaction in open(config['PATH_REACTOME'] + config['REACTOME_PPI']):
-    parts = interaction.split()
-    from_id, to_id = parts[0], parts[1]
+    from_id, to_id, *_ = interaction.split()
     if from_id > to_id:
         from_id, to_id = to_id, from_id
-    if not from_id in reactome_ppis.keys():
-        reactome_ppis[from_id] = {to_id}
-    else:
-        reactome_ppis[from_id].add(to_id)
+    reactome_ppis.setdefault(from_id, set()).add(to_id)
 
 # Convert each set to tuple
 for key in reactome_ppis.keys():
@@ -91,11 +97,21 @@ if not os.path.exists(config['PATH_BIOGRID'] + config['BIOGRID_PPI']):
     
 print("Biogrid protein interactions READY")
 
-#%%
+#%% Check which Reactome interactions appear in Biogrid for human
 
-## Check which Reactome interactions appear in Biogrid for human
-# Traverse gene interactions and convert them to protein interactions
-    
+biogrid_ppi = dictionaries.read_dictionary(config['PATH_BIOGRID'], config['BIOGRID_PPI'])
+
+interactions = []
+feature_biogrid_ppi = []
 for protein, interactors  in reactome_ppis.items():
     for interactor in interactors:
-        print(f"{protein} --> {interactor}")
+        interactions.append((protein, interactor))
+        feature_biogrid_ppi.append(1 if protein in biogrid_ppi and interactor in biogrid_ppi[protein] else 0)
+
+targets = np.ones(len(interactions))
+features = np.array(feature_biogrid_ppi)
+
+print("Reactome interactions reported in Biogrid: ", feature_biogrid_ppi.count(1))
+print("Shape of data: ", features.shape)
+print("Shape of target: ", targets.shape)
+

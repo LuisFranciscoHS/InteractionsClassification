@@ -62,10 +62,7 @@ def read_gene_interactions(path_biogrid, filename_gi):
         from_gene, to_gene = fields[1], fields[2]
         if from_gene > to_gene:
             from_gene, to_gene = to_gene, from_gene
-        if not from_gene in biogrid_gi.keys():
-            biogrid_gi[from_gene] = {to_gene}
-        else:
-            biogrid_gi[from_gene].add(to_gene)
+        biogrid_gi.setdefault(from_gene, set()).add(to_gene)
     for key in biogrid_gi.keys():
         biogrid_gi[key] = tuple(biogrid_gi[key])
     return biogrid_gi
@@ -76,10 +73,7 @@ def read_uniprot_to_entrez_mapping(path_biogrid, filename_entrez_to_uniprot):
     for line in file_entrez_to_uniprot:
         fields = line.split("\t")
         gene, protein = fields[0].strip(), fields[1].strip()
-        if not protein in protein_to_genes.keys():
-            protein_to_genes[protein] = {gene}
-        else:
-            protein_to_genes[protein].add(gene)
+        protein_to_genes.setdefault(protein, set()).add(gene)
     for key in protein_to_genes.keys():
         protein_to_genes[key] = tuple(protein_to_genes[key])
     return protein_to_genes
@@ -90,10 +84,7 @@ def read_entrez_to_uniprot_mapping(path_biogrid, filename_entrez_to_uniprot):
     for line in file_entrez_to_uniprot:
         fields = line.split("\t")
         gene, protein = fields[0].strip(), fields[1].strip()
-        if not gene in genes_to_proteins.keys():
-            genes_to_proteins[gene] = {protein}
-        else:
-            genes_to_proteins[gene].add(protein)
+        genes_to_proteins.setdefault(gene, set()).add(protein)
     for key in genes_to_proteins.keys():
         genes_to_proteins[key] = tuple(genes_to_proteins[key])
     return genes_to_proteins
@@ -109,15 +100,9 @@ def create_ppi_dictionary(gi, entrez_to_uniprot):
                             if uniprot_acc_1 == uniprot_acc_2:
                                 continue
                             if uniprot_acc_1 < uniprot_acc_2:
-                                if not uniprot_acc_1 in result.keys():
-                                    result[uniprot_acc_1] = {uniprot_acc_2}
-                                else:
-                                    result[uniprot_acc_1].add(uniprot_acc_2)
+                                result.setdefault(uniprot_acc_1, set()).add(uniprot_acc_2)
                             else:
-                                if not uniprot_acc_2 in result.keys():
-                                    result[uniprot_acc_2] = {uniprot_acc_1}
-                                else:
-                                    result[uniprot_acc_2].add(uniprot_acc_1)
+                                result.setdefault(uniprot_acc_2, set()).add(uniprot_acc_1)
 
     # Convert set values to tuple values
     for key in result.keys():

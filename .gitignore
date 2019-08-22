@@ -1,6 +1,3 @@
-config.txt
-config*
-
 # Data files
 data/
 
@@ -9,6 +6,9 @@ tools/
 
 # VS Code
 .vscode
+
+# PyCharm
+.idea/
 
 # Visual Studio
 *.pyproj*
@@ -22,8 +22,7 @@ bin/
 obj/
 
 # Environments
-envInteractionsClassification
-envInteractionsClassification/
+venv/*
 
 # Distribution / packaging
 .Python

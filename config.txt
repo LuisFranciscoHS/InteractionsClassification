@@ -1,0 +1,16 @@
+PATH_SWISSPROT  data/UniProt/
+FILE_SWISSPROT_PROTEINS swissprot_human_proteins.tab
+URL_SWISSPROT_PROTEINS  https://www.uniprot.org/uniprot/?query=reviewed:yes+AND+organism:9606
+PATH_BIOGRID    data/Biogrid/
+URL_BIOGRID_ALL https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-3.5.175/BIOGRID-ALL-3.5.175.tab2.zip
+BIOGRID_ALL BIOGRID-ALL-3.5.175.tab2.zip
+BIOGRID_GGIS    BIOGRID-ORGANISM-Homo_sapiens-3.5.175.tab2
+BIOGRID_PPIS    human_protein_interactions.tab
+BIOGRID_ENTREZ_TO_UNIPROT   entrez_to_uniprot.tab
+ID_MAPPING_BATCH_SIZE 1000
+PATH_REACTOME   data/Reactome/
+REACTOME_INTERNAL_EDGES proteinInternalEdges.tsv
+REACTOME_PPIS   ppis.tsv
+PATH_TOOLS  tools/
+FILE_PATHWAYMATCHER PathwayMatcher.jar
+URL_PATHWAYMATCHER  https://github.com/PathwayAnalysisPlatform/PathwayMatcher/releases/latest/download/PathwayMatcher.jar

@@ -241,6 +241,9 @@ class Test_read_set_column_values(TestCase):
                 file.write(f"{x}\t{y}\t{z}\n")
         self.result_trios = read_set_from_columns('', self.file_name_trios)
 
+    def tearDown(self):
+        os.remove(self.file_name_trios)
+
     def test_read_set_columns_correct_result_type(self):
         self.assertEqual(set, type(self.result_trios), msg='Wrong return type of the function')
 

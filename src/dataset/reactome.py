@@ -4,6 +4,8 @@ import subprocess
 
 import numpy as np
 import requests
+import sklearn
+
 from config import read_config
 
 import dictionaries
@@ -38,17 +40,19 @@ def get_interactions(path_swissprot, file_swissprot_proteins, url_swissprot,
                      path_reactome, file_reactome_internal_edges, file_reactome_ppis,
                      path_pathwaymatcher, file_pathwaymatcher, url_pathwaymatcher):
     """Get dictionary of enumerated interactions: pair of accessions --> index"""
-
+    ppis = {}
     if not os.path.exists(path_reactome + file_reactome_ppis):
         create_pathwaymatcher_files(path_swissprot, file_swissprot_proteins, url_swissprot,
                                     path_reactome, file_reactome_internal_edges,
                                     path_pathwaymatcher, file_pathwaymatcher, url_pathwaymatcher)
 
-    print("Reading Reactome interactions...")
-    ppis = dictionaries.read_dictionary(path_reactome, file_reactome_internal_edges,
-                                        order_pairs=True, col_indices=(0, 1), ignore_header=True)
-    if not os.path.exists(path_reactome + file_reactome_ppis):
+        print("Reading Reactome interactions...")
+        ppis = dictionaries.read_dictionary(path_reactome, file_reactome_internal_edges,
+                                            order_pairs=True, col_indices=(0, 1), ignore_header=True)
         dictionaries.write_dictionary_one_to_set(ppis, path_reactome, file_reactome_ppis)
+    else:
+        print("Reading Reactome unique interactions...")
+        ppis = dictionaries.read_dictionary(path_reactome, file_reactome_ppis)
 
     print("Reactome interactions READY")
     return ppis
@@ -68,13 +72,14 @@ def load_dataset(config):
     # Check which Reactome interactions appear in Biogrid for human
     interactions = dictionaries.flatten_dictionary(reactome_ppis)
     targets = np.ones(len(interactions))
-    features = np.array(dictionaries.in_dictionary(interactions, biogrid_ppis))
+    features = dictionaries.in_dictionary(interactions, biogrid_ppis)
 
     print("Reactome interactions reported in Biogrid: ", features.count(True))
+    features = np.array(features)
     print("Shape of data: ", features.shape)
     print("Shape of target: ", targets.shape)
 
-    return {features: features, targets: targets, interactions: interactions}
+    return sklearn.utils.Bunch(features=features, targets=targets, interactions=interactions)
 
 
 if __name__ == '__main__':

@@ -5,10 +5,17 @@ from config import read_config
 from dataset import reactome
 
 
-def merge_features(*features_arrays):
-    """Creates one np.array with one column for each feature"""
-    # np.concatenate((a, b.T), axis=1)
-    return features_arrays[0]
+def merge_features(*features):
+    """Creates one np.array of sample vectors. Each vector has k elements for k features.
+    Each feature should be a simple list."""
+    if len(features) == 0:
+        raise ValueError('Missing feature arrays to merge')
+
+    result = np.array([[sample] for sample in features[0]])
+    for feature in features[1:]:
+        result = np.concatenate((result, np.array([feature]).T), axis=1)
+    print(result)
+    return result
 
 
 def merge_datasets(*datasets):

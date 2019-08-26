@@ -72,16 +72,18 @@ def load_dataset(config):
     # Check which Reactome interactions appear in Biogrid for human
     interactions = dictionaries.flatten_dictionary(reactome_ppis)
     targets = np.ones(len(interactions))
-    features = dictionaries.in_dictionary(interactions, biogrid_ppis)
+    feature_in_biogrid = dictionaries.in_dictionary(interactions, biogrid_ppis)
+    print("Reactome interactions reported in Biogrid: ", feature_in_biogrid.count(1))
 
-    print("Reactome interactions reported in Biogrid: ", features.count(True))
-    features = np.array(features)
+    from dataset.dataset_loader import merge_features
+    features = merge_features(feature_in_biogrid)
+    feature_names = ['in_biogrid']
     print("Shape of data: ", features.shape)
     print("Shape of target: ", targets.shape)
 
-    return sklearn.utils.Bunch(features=features, targets=targets, interactions=interactions)
+    return sklearn.utils.Bunch(features=features, targets=targets, interactions=interactions, feature_names=feature_names)
 
 
 if __name__ == '__main__':
-    dataset = load_dataset(read_config('../../config/'))
+    dataset = load_dataset(read_config('../../'))
     print("Loaded Reactome dataset")

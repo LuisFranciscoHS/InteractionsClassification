@@ -43,9 +43,10 @@ def load_dataset(path_config):
     dataset_negative = {}
 
     # Bind datasets together
-    merge_datasets(dataset_reactome, dataset_negative)
+    dataset = merge_datasets(dataset_reactome)
 
     return sklearn.utils.Bunch(
-        features=dataset_reactome['features'],
-        target=dataset_reactome['target'],
-        interactions=dataset_reactome['interactions'])
+        features=dataset['features'],
+        targets=dataset['targets'],
+        interactions=dataset['interactions'],
+        feature_names=dataset['feature_names'])

@@ -87,7 +87,7 @@ def in_dictionary(pairs, dictionary):
     """Returns a list of booleans indicating if each pair of the list appears in the dictionary"""
     result = []
     for k, v in pairs:
-        result.append(True if k in dictionary and v in dictionary[k] else False)
+        result.append(1 if k in dictionary and v in dictionary[k] else 0)
     return result
 
 

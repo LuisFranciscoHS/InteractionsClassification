@@ -1,3 +1,4 @@
+#%%
 # Start point for all the source files.
 # Executes machine learning classification methods to decide if experimental
 # protein interactions can be functional as those participating in biological
@@ -11,17 +12,17 @@ from config import append_relative_path
 
 
 def main():
-    print(os.getcwd())
     if len(sys.argv) < 2:
         print("Missing configuration file argument.")
         return
-    config = read_config('../')
 
 #%% Create data set
-    dataset = dataset_loader.load_dataset(config)
+    print(os.getcwd())
+    dataset = dataset_loader.load_dataset(sys.argv[1])
 
 #%% Execute nearest neighbours classifier
-    #score = nn.classify(dataset)
+    score = nn.classify(dataset)
+    print(f"Nearest neighbours: {score}")
 
 #%% Execute decision tree classifier
 
@@ -31,6 +32,6 @@ def main():
 
 #%% Execute naïve bayes classifier
 
-
+#%%
 if __name__ == '__main__':
     main()

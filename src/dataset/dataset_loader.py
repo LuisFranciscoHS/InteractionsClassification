@@ -49,4 +49,5 @@ def load_dataset(path_config):
         features=dataset['features'],
         targets=dataset['targets'],
         interactions=dataset['interactions'],
-        feature_names=dataset['feature_names'])
+        feature_names=dataset['feature_names'],
+        target_names=('non-functional', 'functional'))

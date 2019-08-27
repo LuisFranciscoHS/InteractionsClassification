@@ -71,7 +71,7 @@ def load_dataset(config):
 
     # Check which Reactome interactions appear in Biogrid for human
     interactions = dictionaries.flatten_dictionary(reactome_ppis)
-    targets = np.ones(len(interactions))
+    targets = np.ones(len(interactions), dtype=int)
     feature_in_biogrid = dictionaries.in_dictionary(interactions, biogrid_ppis)
     print("Reactome interactions reported in Biogrid: ", feature_in_biogrid.count(1))
 

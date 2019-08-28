@@ -3,7 +3,8 @@ from unittest import TestCase
 
 from config import read_config
 from dataset import biogrid
-from dataset.biogrid import create_ggi_file, create_ppis_dictionary
+from dataset.biogrid import create_ggi_file
+from dictionaries import create_ppis_dictionary
 
 
 class Test_biogrid(TestCase):

@@ -47,12 +47,12 @@ def get_interactions(path_swissprot, file_swissprot_proteins, url_swissprot,
                                     path_pathwaymatcher, file_pathwaymatcher, url_pathwaymatcher)
 
         print("Reading Reactome interactions...")
-        ppis = dictionaries.read_dictionary(path_reactome, file_reactome_internal_edges,
-                                            order_pairs=True, col_indices=(0, 1), ignore_header=True)
+        ppis = dictionaries.read_dictionary_one_to_set(path_reactome, file_reactome_internal_edges,
+                                                       order_pairs=True, col_indices=(0, 1), ignore_header=True)
         dictionaries.write_dictionary_one_to_set(ppis, path_reactome, file_reactome_ppis)
     else:
         print("Reading Reactome unique interactions...")
-        ppis = dictionaries.read_dictionary(path_reactome, file_reactome_ppis)
+        ppis = dictionaries.read_dictionary_one_to_set(path_reactome, file_reactome_ppis)
 
     print("Reactome interactions READY")
     return ppis

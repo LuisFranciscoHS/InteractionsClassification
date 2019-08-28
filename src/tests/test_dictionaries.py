@@ -1,7 +1,7 @@
 import os
 from unittest import TestCase
 
-from dictionaries import write_dictionary_one_to_one, read_dictionary, convert_tab_to_dict, write_dictionary_one_to_set, \
+from dictionaries import write_dictionary_one_to_one, read_dictionary_one_to_set, convert_tab_to_dict, write_dictionary_one_to_set, \
     read_set_from_columns, get_intersection, flatten_dictionary, in_dictionary
 
 
@@ -13,7 +13,7 @@ class Test_dictionaries(TestCase):
         with open('languages.txt', 'w') as file_languages:
             for entry in languages:
                 file_languages.write(f"{entry[0]}\t{entry[1]}\n")
-        self.languages = read_dictionary('./', 'languages.txt')
+        self.languages = read_dictionary_one_to_set('./', 'languages.txt')
 
     def tearDown(self):
         os.remove('languages.txt')
@@ -70,7 +70,7 @@ class Test_dictionaries(TestCase):
             for x, y in pairs:
                 file.write(f"{x}\t{y}\n")
         # Execute target method
-        result = read_dictionary('', file_name, order_pairs=True)
+        result = read_dictionary_one_to_set('', file_name, order_pairs=True)
 
         # Check the pairs order was corrected, showing them as key and value when word1 < word2 Lexicographical order
         self.assertIn('b', result.keys(), msg="Missing key because it did not order the column values")
@@ -87,7 +87,7 @@ class Test_dictionaries(TestCase):
                 file.write(f"{x}\t{y}\t{z}\n")
 
         # Execute target method
-        result = read_dictionary('', file_name, order_pairs=True, col_indices=(1, 2))
+        result = read_dictionary_one_to_set('', file_name, order_pairs=True, col_indices=(1, 2))
 
         # Check values are correct
         self.assertIn('1', result.keys(), msg="Missing key in dictionary")
@@ -108,7 +108,7 @@ class Test_dictionaries(TestCase):
 
         with self.assertRaises(ValueError,
                                msg='Should raise an exception because needed columns of the file are missing.'):
-            read_dictionary('', file_name, order_pairs=True)
+            read_dictionary_one_to_set('', file_name, order_pairs=True)
 
         os.remove(file_name)
 
@@ -123,7 +123,7 @@ class Test_dictionaries(TestCase):
 
         with self.assertRaises(ValueError,
                                msg='Should raise an exception because needed columns of the file are missing.'):
-            read_dictionary('', file_name, col_indices=(1, 2))
+            read_dictionary_one_to_set('', file_name, col_indices=(1, 2))
 
         os.remove(file_name)
 
@@ -136,7 +136,7 @@ class Test_dictionaries(TestCase):
                 file.write(f"{x}\t{y}\t{z}\n")
 
         # Execute target method
-        result = read_dictionary('', file_name, order_pairs=True, col_indices=(1, 2), ignore_header=True)
+        result = read_dictionary_one_to_set('', file_name, order_pairs=True, col_indices=(1, 2), ignore_header=True)
 
         # Check headers are not taken as key, value pairs
         self.assertNotIn('Column1', result.keys(), msg="Missing key in dictionary")

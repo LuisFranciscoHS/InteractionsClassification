@@ -1,11 +1,11 @@
 import os
 
-import requests
-
 import conversions
 from config import read_config
 from dataset.download import download_if_not_exists
-from dictionaries import read_dictionary, write_dictionary_one_to_set, read_set_from_columns
+from dictionaries import read_dictionary_one_to_set, write_dictionary_one_to_set, read_set_from_columns, \
+    create_ppis_dictionary
+from zipfile import ZipFile
 
 
 def create_ggi_file(url, path_biogrid, filename_all, filename_ggis):
@@ -15,7 +15,6 @@ def create_ggi_file(url, path_biogrid, filename_all, filename_ggis):
         download_if_not_exists(path_biogrid, filename_all, url, 'Biogrid gene interactions')
 
         # Decompress the file
-        from zipfile import ZipFile
         with ZipFile(path_biogrid + filename_all, 'r') as zip:
             print("Extracting human gene interactions file...")
             zip.extract(filename_ggis, path_biogrid)
@@ -52,24 +51,6 @@ def create_gene_to_protein_mapping(path_biogrid, filename_ggis, url, filename_al
     print("Gene --> Protein mapping READY")
 
 
-def create_ppis_dictionary(ggis, entrez_to_uniprot):
-    """Create dictionary protein --> set of interactiors in lexicographic order"""
-    result = {}
-    for gene, interactors in ggis.items():
-        if gene in entrez_to_uniprot.keys():
-            for interactor in interactors:
-                if interactor in entrez_to_uniprot.keys():
-                    for uniprot_acc_1 in entrez_to_uniprot[gene]:
-                        for uniprot_acc_2 in entrez_to_uniprot[interactor]:
-                            if uniprot_acc_1 == uniprot_acc_2:
-                                continue
-                            if uniprot_acc_1 < uniprot_acc_2:
-                                result.setdefault(uniprot_acc_1, set()).add(uniprot_acc_2)
-                            else:
-                                result.setdefault(uniprot_acc_2, set()).add(uniprot_acc_1)
-    return result
-
-
 def get_interactions(path_biogrid, url, filename_all, filename_ggis, filename_ppis,
                      filename_entrez_to_uniprot, batch_size=1000):
     """Returns dictionary of Biogrid protein interactions enumerated"""
@@ -78,17 +59,17 @@ def get_interactions(path_biogrid, url, filename_all, filename_ggis, filename_pp
         print("Creating biogrid protein interaction file...")
 
         create_ggi_file(url, path_biogrid, filename_all, filename_ggis)
-        ggis = read_dictionary(path_biogrid, filename_ggis, order_pairs=True, col_indices=(1, 2))
+        ggis = read_dictionary_one_to_set(path_biogrid, filename_ggis, order_pairs=True, col_indices=(1, 2))
 
         create_gene_to_protein_mapping(path_biogrid, filename_ggis, url, filename_all,
                                        filename_entrez_to_uniprot, batch_size)
-        entrez_to_uniprot = read_dictionary(path_biogrid, filename_entrez_to_uniprot)
+        entrez_to_uniprot = read_dictionary_one_to_set(path_biogrid, filename_entrez_to_uniprot)
 
         # Create dictionary with converted unique protein pairs
         ppis = create_ppis_dictionary(ggis, entrez_to_uniprot)
         write_dictionary_one_to_set(ppis, path_biogrid, filename_ppis)
     else:
-        ppis = read_dictionary(path_biogrid, filename_ppis, order_pairs=True)
+        ppis = read_dictionary_one_to_set(path_biogrid, filename_ppis, order_pairs=True)
     print("Biogrid protein interactions READY")
     return ppis
 

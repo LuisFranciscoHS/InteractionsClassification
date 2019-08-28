@@ -1,7 +1,7 @@
 import os
 
 
-def read_dictionary(file_path, file_name, order_pairs=False, col_indices=(0, 1), ignore_header=False):
+def read_dictionary_one_to_set(file_path, file_name, order_pairs=False, col_indices=(0, 1), ignore_header=False):
     """
     Read two columns mapping file into a dictionary key --> set.\n
     Removes repeated values for each key.\n
@@ -83,18 +83,36 @@ def get_intersection(dictionary1, dictionary2):
     return result
 
 
-def in_dictionary(pairs, dictionary):
+def in_dictionary(pairs, dictionary_one_to_set):
     """Returns a list of booleans indicating if each pair of the list appears in the dictionary"""
     result = []
     for k, v in pairs:
-        result.append(1 if k in dictionary and v in dictionary[k] else 0)
+        result.append(1 if k in dictionary_one_to_set and v in dictionary_one_to_set[k] else 0)
     return result
 
 
 def flatten_dictionary(dictionary):
-    """Get an unpacked list of the key value pairs of the dictionary"""
+    """Get a list of tuples with the key value pairs of the dictionary. """
     result = []
     for k, s in dictionary.items():
         for v in s:
             result.append((k, v))
+    return result
+
+
+def create_ppis_dictionary(interactions_with_old_id, id_mapping):
+    """Create dictionary protein --> set of interactiors in lexicographic order"""
+    result = {}
+    for from_old_id, to_old_id_set in interactions_with_old_id.items():
+        if from_old_id in id_mapping.keys():
+            for to_old_id in to_old_id_set:
+                if to_old_id in id_mapping.keys():
+                    for from_new_id in id_mapping[from_old_id]:
+                        for to_new_id in id_mapping[to_old_id]:
+                            if from_new_id == to_new_id:
+                                continue
+                            if from_new_id < to_new_id:
+                                result.setdefault(from_new_id, set()).add(to_new_id)
+                            else:
+                                result.setdefault(to_new_id, set()).add(from_new_id)
     return result

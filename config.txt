@@ -14,3 +14,8 @@ REACTOME_PPIS   ppis.tsv
 PATH_TOOLS  tools/
 FILE_PATHWAYMATCHER PathwayMatcher.jar
 URL_PATHWAYMATCHER  https://github.com/PathwayAnalysisPlatform/PathwayMatcher/releases/latest/download/PathwayMatcher.jar
+PATH_STRING data/String/
+STRING_PROTEIN_NETWORK  9606.protein.actions.v11.0.txt
+URL_STRING_PROTEIN_NETWORK  https://stringdb-static.org/download/protein.actions.v11.0/9606.protein.actions.v11.0.txt.gz
+STRING_ID_MAP   human.uniprot_2_string.2018.tsv
+URL_STRING_ID_MAP   https://string-db.org/mapping_files/uniprot/human.uniprot_2_string.2018.tsv.gz

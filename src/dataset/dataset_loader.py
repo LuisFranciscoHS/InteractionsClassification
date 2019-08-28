@@ -2,7 +2,7 @@ import numpy as np
 import sklearn
 
 from config import read_config
-from dataset import reactome
+from dataset import reactome, string_database
 
 
 def merge_features(*features):
@@ -37,7 +37,8 @@ def load_dataset(path_config):
     # Get Reactome dataset
     dataset_reactome = reactome.load_dataset(config)
 
-    # Get String dataset TODO
+    # Get String dataset
+    dataset_string = string_database.load_dataset(config)
 
     # Get negative dataset TODO
     dataset_negative = {}

@@ -19,3 +19,6 @@ STRING_PROTEIN_NETWORK  9606.protein.actions.v11.0.txt
 URL_STRING_PROTEIN_NETWORK  https://stringdb-static.org/download/protein.actions.v11.0/9606.protein.actions.v11.0.txt.gz
 STRING_ID_MAP   human.uniprot_2_string.2018.tsv
 URL_STRING_ID_MAP   https://string-db.org/mapping_files/uniprot/human.uniprot_2_string.2018.tsv.gz
+STRING_FEATURES string_features.csv
+STRING_INTERACTIONS string_interactions.csv
+STRING_TARGETS  string_targets.csv

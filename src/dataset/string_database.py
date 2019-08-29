@@ -14,6 +14,7 @@ from dataset.download import download_if_not_exists
 #%%
 def gather_files(config):
     """Downloads and extracts the String protein network for Human and the mapping from Entrez to Uniprot."""
+    print("Downloading STRING files...")
     download_if_not_exists(config['PATH_STRING'], config['STRING_ID_MAP'] + '.gz',
                            config['URL_STRING_ID_MAP'], 'String id mapping')
     with gzip.open(config['PATH_STRING'] + config['STRING_ID_MAP'] + '.gz') as gz_file:
@@ -37,29 +38,55 @@ def create_ensembl_uniprot_mapping(config):
 
 
 #%%
-def create_interactions(config):
-    """Creates a list of tuples from the String interactions with UniProt accessions"""
-    mapping = create_ensembl_uniprot_mapping(config)
-    ensemble_ppis = dictionaries.read_dictionary_one_to_set(config['PATH_STRING'], config['STRING_PROTEIN_NETWORK'],
-                                                            order_pairs=False, col_indices=(0, 1), ignore_header=True)
-    ppis = dictionaries.create_ppis_dictionary(ensemble_ppis, mapping)
-    return dictionaries.flatten_dictionary(ppis)
+def fill_dataframe(original_csv, new_dataframe):
+    print("Filling feature values...")
+    for sample in original_csv.itertuples():
+        mode, score, pair = sample[3], sample[7], (sample[1], sample[2])
+        # print(f"Mode: {mode}, Score: {score}, Pair: {pair}\n")
+        new_dataframe.at[pair, 'score_' + mode + '_mode'] = score
 
 
 #%%
-def create_features(config, mapping=None):
+def check_no_missing_values(frame):
+    print("Checking not missing values...")
+    for col in frame.columns:
+        if pd.isnull(frame[col]).any():
+            return False
+    return True
+
+
+#%%
+def get_or_create_features(config, mapping=None):
     """Creates pandas dataframe with a vector of features for each interaction in string.
     The features are: """
+    features = {}
+    if not os.path.exists(config['PATH_STRING'] + config['STRING_FEATURES']):
+        gather_files(config)
 
-    features = pd.read_csv(config['PATH_STRING'] + config['STRING_PROTEIN_NETWORK'], sep='\t')
-    # Replace identifiers
-    if mapping is None:
-        mapping = create_ensembl_uniprot_mapping(config)
-    features['item_id_a'] = features['item_id_a'].apply(lambda x: next(iter(mapping.get(x, 'A00000'))))
-    features['item_id_b'] = features['item_id_b'].apply(lambda x: next(iter(mapping.get(x, 'A00000'))))
+        print("Reading data from STRING file...")
+        original_features = pd.read_csv(config['PATH_STRING'] + config['STRING_PROTEIN_NETWORK'], sep='\t')
+        # Replace identifiers
+        if mapping is None:
+            mapping = create_ensembl_uniprot_mapping(config)
+        original_features['item_id_a'] = original_features['item_id_a'].apply(lambda x: next(iter(mapping.get(x, 'A00000'))))
+        original_features['item_id_b'] = original_features['item_id_b'].apply(lambda x: next(iter(mapping.get(x, 'A00000'))))
 
+        # Create desired columns
+        indexes = list({(row[1], row[2]) for row in original_features.itertuples()})
+        columns = ['score_' + mode + '_mode' for mode in original_features['mode'].unique()]
+        features = pd.DataFrame(columns=columns, index=indexes)
+        for column in features.columns:
+            features[column] = 0.0
+
+        fill_dataframe(original_features, features)
+
+        if check_no_missing_values(features):
+            print("Features READY")
+
+        features.to_csv(config['PATH_STRING'] + config['STRING_FEATURES'], header=True)
+    else:
+        features = pd.read_csv(config['PATH_STRING'] + config['STRING_FEATURES'])
     return features
-
 
 #%%
 def create_targets(config):
@@ -77,11 +104,9 @@ def create_targets(config):
 def load_dataset(config):
     """Create dictionary with the features, target and interactions from Reactome as the positive dataset."""
 
-    gather_files(config)
-
-    features = create_features(config)
-    interactions = create_interactions(features)
-    targets = create_targets(config)
+    features = get_or_create_features(config)
+    interactions = features.index
+    # targets = create_targets(config)
 
     return sklearn.utils.Bunch(features=features,
                                targets=targets,

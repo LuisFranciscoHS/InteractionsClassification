@@ -3,6 +3,7 @@ import sklearn
 
 from config import read_config
 from dataset import reactome, string_database
+from dataset.string_database import get_or_create_features
 
 
 def merge_features(*features):
@@ -30,25 +31,15 @@ def merge_datasets(*datasets):
     return datasets[0]
 
 
-def load_dataset(path_config):
+def load_dataset(config):
+    """Create Bunch with the features, target and interactions from STRING with Reactome interactions as the positive
+    dataset and the rest of interactions as negative dataset."""
+    print('Creating dataset from STRING...')
+    features = string_database.get_or_create_features(config)
+    interactions = features.index
+    targets = string_database.create_targets(config, interactions)
+    features_names = features.columns
+    target_names = ('non-functional', 'functional')
 
-    config = read_config(path_config)
-
-    # Get Reactome dataset
-    dataset_reactome = reactome.load_dataset(config)
-
-    # Get String dataset
-    dataset_string = string_database.load_dataset(config)
-
-    # Get negative dataset TODO
-    dataset_negative = {}
-
-    # Bind datasets together
-    dataset = merge_datasets(dataset_reactome)
-
-    return sklearn.utils.Bunch(
-        features=dataset['features'],
-        targets=dataset['targets'],
-        interactions=dataset['interactions'],
-        feature_names=dataset['feature_names'],
-        target_names=('non-functional', 'functional'))
+    return sklearn.utils.Bunch(features=features, targets=targets, interactions=interactions,
+                               feature_names=features_names, target_names=target_names)

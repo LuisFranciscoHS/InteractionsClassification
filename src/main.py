@@ -17,8 +17,9 @@ def main():
         return
 
 #%% Create data set
-    print(os.getcwd())
-    dataset = dataset_loader.load_dataset(sys.argv[1])
+    # print(os.getcwd())
+    config = read_config(sys.argv[1])
+    dataset = dataset_loader.load_dataset(config)
 
 #%% Execute nearest neighbours classifier
     score = nn.classify(dataset)

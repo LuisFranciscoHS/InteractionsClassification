@@ -1,15 +1,15 @@
 #%%
 import gzip
 import os
-from zipfile import ZipFile
+import re
 
-import numpy as np
 import pandas as pd
-import sklearn
 
 import dictionaries
 from config import read_config
+from dataset import reactome, dataset_loader
 from dataset.download import download_if_not_exists
+
 
 #%%
 def gather_files(config):
@@ -59,6 +59,7 @@ def check_no_missing_values(frame):
 def get_or_create_features(config, mapping=None):
     """Creates pandas dataframe with a vector of features for each interaction in string.
     The features are: """
+    print("Creating features...")
     features = {}
     if not os.path.exists(config['PATH_STRING'] + config['STRING_FEATURES']):
         gather_files(config)
@@ -85,36 +86,29 @@ def get_or_create_features(config, mapping=None):
 
         features.to_csv(config['PATH_STRING'] + config['STRING_FEATURES'], header=True)
     else:
-        features = pd.read_csv(config['PATH_STRING'] + config['STRING_FEATURES'])
+        features = pd.read_csv(config['PATH_STRING'] + config['STRING_FEATURES'], index_col=0)
+        features.index = [tuple(re.sub("['() ]", "", i).split(',')) for i in features.index]
+        print("Features READY")
     return features
 
+
 #%%
-def create_targets(config):
-    # reactome_ppis = reactome.get_interactions(config['PATH_SWISSPROT'], config['FILE_SWISSPROT_PROTEINS'],
-    #                                           config['URL_SWISSPROT_PROTEINS'],
-    #                                           config['PATH_REACTOME'], config['REACTOME_INTERNAL_EDGES'],
-    #                                           config['REACTOME_PPIS'],
-    #                                           config['PATH_TOOLS'], config['FILE_PATHWAYMATCHER'],
-    #                                           config['URL_PATHWAYMATCHER'])
-    # targets = np.ones(len(interactions), dtype=int)
-    # feature_in_biogrid = dictionaries.in_dictionary(interactions, biogrid_ppis)
-    return np.array([])
+def create_targets(config, interactions):
+    """Set if each interaction pair is functional interaction or not.
+    In other words, check if the pair interacts in Reactome.
+    1 = yes = True, 0 = no = False"""
+    print("Creating targets...")
+    reactome_ppis = reactome.get_interactions(config['PATH_SWISSPROT'], config['FILE_SWISSPROT_PROTEINS'],
+                                              config['URL_SWISSPROT_PROTEINS'],
+                                              config['PATH_REACTOME'], config['REACTOME_INTERNAL_EDGES'],
+                                              config['REACTOME_PPIS'],
+                                              config['PATH_TOOLS'], config['FILE_PATHWAYMATCHER'],
+                                              config['URL_PATHWAYMATCHER'])
+    return pd.Series(dictionaries.in_dictionary(interactions, reactome_ppis))
 
 
-def load_dataset(config):
-    """Create dictionary with the features, target and interactions from Reactome as the positive dataset."""
-
-    features = get_or_create_features(config)
-    interactions = features.index
-    # targets = create_targets(config)
-
-    return sklearn.utils.Bunch(features=features,
-                               targets=targets,
-                               interactions=interactions,
-                               feature_names=['non-functional', 'functional'])
-
-
+#%%
 if __name__ == '__main__':
     print(os.getcwd())
-    dataset = load_dataset(read_config('../../'))
-    print("Loaded String dataset")
+    dataset = dataset_loader.load_dataset(read_config('../../'))
+    print("Loaded STRING dataset")

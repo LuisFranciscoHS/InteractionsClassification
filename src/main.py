@@ -8,16 +8,15 @@ import sys
 from classification import nearest_neighbours as nn
 from config import read_config
 from dataset import dataset_loader
-from config import append_relative_path
 
 
+#%%
 def main():
     if len(sys.argv) < 2:
         print("Missing configuration file argument.")
         return
 
-#%% Create data set
-    # print(os.getcwd())
+    print(f"Working directory: {os.getcwd()}")
     config = read_config(sys.argv[1])
     dataset = dataset_loader.load_dataset(config)
 

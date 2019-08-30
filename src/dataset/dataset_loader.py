@@ -1,7 +1,7 @@
 import numpy as np
 import sklearn
 
-from config import read_config
+from config_loader import read_config
 from dataset import reactome, string_database
 from dataset.string_database import get_or_create_features
 
@@ -37,7 +37,7 @@ def load_dataset(config):
     print('Creating dataset from STRING...')
     features = string_database.get_or_create_features(config)
     interactions = features.index
-    targets = string_database.create_targets(config, interactions)
+    targets = string_database.create_targets(config, features)
     features_names = features.columns
     target_names = ('non-functional', 'functional')
 

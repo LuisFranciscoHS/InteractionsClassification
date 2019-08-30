@@ -6,7 +6,7 @@ import re
 import pandas as pd
 
 import dictionaries
-from config import read_config
+from config_loader import read_config
 from dataset import reactome, dataset_loader
 from dataset.download import download_if_not_exists
 
@@ -93,7 +93,7 @@ def get_or_create_features(config, mapping=None):
 
 
 #%%
-def create_targets(config, interactions):
+def create_targets(config, features):
     """Set if each interaction pair is functional interaction or not.
     In other words, check if the pair interacts in Reactome.
     1 = yes = True, 0 = no = False"""
@@ -104,7 +104,10 @@ def create_targets(config, interactions):
                                               config['REACTOME_PPIS'],
                                               config['PATH_TOOLS'], config['FILE_PATHWAYMATCHER'],
                                               config['URL_PATHWAYMATCHER'])
-    return pd.Series(dictionaries.in_dictionary(interactions, reactome_ppis))
+    result = pd.Series(dictionaries.in_dictionary(features.index, reactome_ppis))
+    result.index = features.index
+    print("Added index to targets.")
+    return result
 
 
 #%%

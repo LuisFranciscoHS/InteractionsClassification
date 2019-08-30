@@ -4,7 +4,7 @@ import importlib
 
 import matplotlib
 
-from config import read_config
+from config_loader import read_config
 from dataset import string_database
 
 importlib.reload(string_database)

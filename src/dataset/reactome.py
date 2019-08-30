@@ -6,7 +6,7 @@ import numpy as np
 import requests
 import sklearn
 
-from config import read_config
+from config_loader import read_config
 
 import dictionaries
 from dataset import biogrid

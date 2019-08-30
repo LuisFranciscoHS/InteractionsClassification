@@ -1,7 +1,7 @@
 import os
 from unittest import TestCase
 
-from config import read_config
+from config_loader import read_config
 from dataset import biogrid
 from dataset.biogrid import create_ggi_file
 from dictionaries import create_ppis_dictionary

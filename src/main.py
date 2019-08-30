@@ -6,7 +6,7 @@
 import os
 import sys
 from classification import nearest_neighbours as nn
-from config import read_config
+from config_loader import read_config
 from dataset import dataset_loader
 
 

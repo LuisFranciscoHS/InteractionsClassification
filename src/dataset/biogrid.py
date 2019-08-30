@@ -1,7 +1,7 @@
 import os
 
 import conversions
-from config import read_config
+from config_loader import read_config
 from dataset.download import download_if_not_exists
 from dictionaries import read_dictionary_one_to_set, write_dictionary_one_to_set, read_set_from_columns, \
     create_ppis_dictionary

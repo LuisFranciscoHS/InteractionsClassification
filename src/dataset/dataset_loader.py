@@ -1,5 +1,7 @@
+import os
 import numpy as np
 import sklearn
+from sklearn.model_selection import train_test_split
 
 from config_loader import read_config
 from dataset import reactome, string_database
@@ -43,3 +45,13 @@ def load_dataset(config):
 
     return sklearn.utils.Bunch(features=features, targets=targets, interactions=interactions,
                                feature_names=features_names, target_names=target_names)
+
+def get_train_and_test_X_y(path, discard_percentage=0.7):
+    """Get the feature matrix 'X_train', 'X_test' and the label vector 'y_train', 'y_test' for the
+    interactions dataset."""
+    print("Reading config from: ", os.getcwd())
+    dataset = load_dataset(read_config(path))
+    X_sample, X_discard, y_sample, y_discard = train_test_split(dataset['features'],
+                                                                dataset['targets'],
+                                                                random_state=33, test_size=discard_percentage)
+    return train_test_split(X_sample, y_sample, random_state=33, test_size=0.2)

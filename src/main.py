@@ -5,7 +5,6 @@
 # pathways.
 import os
 import sys
-from classification import nearest_neighbours as nn
 from config_loader import read_config
 from dataset import dataset_loader
 
@@ -19,10 +18,6 @@ def main():
     print(f"Working directory: {os.getcwd()}")
     config = read_config(sys.argv[1])
     dataset = dataset_loader.load_dataset(config)
-
-#%% Execute nearest neighbours classifier
-    score = nn.classify(dataset)
-    print(f"Nearest neighbours: {score}")
 
 #%% Execute decision tree classifier
 

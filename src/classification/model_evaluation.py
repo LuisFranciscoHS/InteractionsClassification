@@ -71,6 +71,13 @@ def plot_precision_recall_vs_threshold(precisions, recalls, thresholds):
     plt.ylim([0, 1])
 
 
+def plot_precision_vs_recall(precisions, recalls):
+    plt.plot(recalls, precisions, "b-", linewidth=2)
+    plt.xlabel("Recall", fontsize=16)
+    plt.ylabel("Precision", fontsize=16)
+    plt.axis([0, 1, 0, 1])
+
+
 #%% Set script configuration
 print(f"Working directory: {os.getcwd()}")
 if os.getcwd().endswith("InteractionsClassification"):
@@ -132,20 +139,23 @@ for model_name, model in models.items():
 #%% Calculate prediction scores
 y_scores = {model_name: model.decision_function(X_train) for model_name, model in models.items()}
 
-#%% Show precision recall vs threshold curve
+#%% Show precision-recall vs threshold curve and precision vs recall curve
 for model_name, model in models.items():
     print(f"\n{model_name.title()}:")
     precisions, recalls, thresholds = precision_recall_curve(y_train, y_scores[model_name])
 
+    # Precision recall vs threshold curve
     plt.figure(figsize=(8, 4))
     plot_precision_recall_vs_threshold(precisions, recalls, thresholds)
     plt.xlim([-550, 550])
-    save_fig(figures_path, model_name + "_precision_recall_vs_threshold_plot")
+    save_fig(figures_path, model_name.replace(" ", "_") + "_precision_recall_vs_threshold_plot")
     plt.show()
 
-#%% TODO: Show precision vs recall curve
-
-
+    # Precision vs recall curve
+    plt.figure(figsize=(8, 4))
+    plot_precision_vs_recall(precisions, recalls)
+    save_fig(figures_path, model_name.replace(" ", "_") + "_precision_vs_recall_plot")
+    plt.show()
 
 #%% Show ROC curve
 plt.figure(figsize=(8, 6))

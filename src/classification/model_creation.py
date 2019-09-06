@@ -1,20 +1,18 @@
 # %% Training and Evaluating on the Training Set: Create a linear, Decision Tree and Random forest models
-from sklearn.linear_model import LinearRegression
-from sklearn.tree import DecisionTreeRegressor
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-from classification.NeverFunctionalClassifier import NeverFunctionalClassifier
-from sklearn.linear_model import SGDClassifier
-from sklearn.svm import SVC
+import joblib
 
-models = {
-    "linear regression": LinearRegression(),
-    "decision tree reg": DecisionTreeRegressor(),
-    "random forest reg": RandomForestRegressor(),
-    "never functional classifier": NeverFunctionalClassifier(),
-    "scochastic gradient descent classifier": SGDClassifier(),
-    "random forest classifier": RandomForestClassifier(),
-    #"support vector classifier": SVC()
-}
-for clf_name, clf in models.items():
-    print(f"Training {clf_name.upper()}...")
-    clf.fit(X_train, y_train)
+import config
+from dataset.dataset_loader import get_train_and_test_X_y
+
+# %% Select which models to create
+selected_models = config.models.index     # Create all models available (all keys)
+
+# %% Load dataset
+X_train, X_test, y_train, y_test = get_train_and_test_X_y("")
+
+# %% Train and store to file initial models
+for name in config.models.index:
+    print(f"Creating {name.upper()}...")
+    model = config.models.estimators[name]
+    model.fit(X_train, y_train)
+    joblib.dump(model, "models/" + name.replace(" ", "_") + ".pkl")

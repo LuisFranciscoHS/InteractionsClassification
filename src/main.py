@@ -5,7 +5,7 @@
 # pathways.
 import os
 import sys
-from config_loader import read_config
+from config import read_config
 from dataset import dataset_loader
 
 

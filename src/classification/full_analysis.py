@@ -12,10 +12,10 @@ print(f"Working directory: {os.getcwd()}")
 #     print(path)
 
 # %%
-import config_loader
+import config
 from dataset import dataset_loader
 
-dataset = dataset_loader.load_dataset(config_loader.read_config(''))
+dataset = dataset_loader.load_dataset(config.read_config(''))
 
 # %% Create test dataset
 from sklearn.model_selection import train_test_split

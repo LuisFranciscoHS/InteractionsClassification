@@ -6,7 +6,7 @@ import re
 import pandas as pd
 
 import dictionaries
-from config_loader import read_config
+from config import read_config
 from dataset import reactome, dataset_loader
 from dataset.download import download_if_not_exists
 

@@ -2,8 +2,9 @@ import os
 import numpy as np
 import sklearn
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
-from config_loader import read_config
+from config import read_config
 from dataset import reactome, string_database
 from dataset.string_database import get_or_create_features
 
@@ -51,6 +52,10 @@ def get_train_and_test_X_y(path, discard_percentage=0.7):
     interactions dataset."""
     print("Reading config from: ", os.getcwd())
     dataset = load_dataset(read_config(path))
+    scaler = StandardScaler()
+    scaler.fit(dataset['features'])
+    dataset['features'] = scaler.transform(dataset['features'])
+
     X_sample, X_discard, y_sample, y_discard = train_test_split(dataset['features'],
                                                                 dataset['targets'],
                                                                 random_state=33, test_size=discard_percentage)

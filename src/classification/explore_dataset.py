@@ -10,9 +10,9 @@ for path in sys.path:
     print(path)
 
 #%%
-import config_loader
+import config
 from dataset import dataset_loader
-dataset = dataset_loader.load_dataset(config_loader.read_config(''))
+dataset = dataset_loader.load_dataset(config.read_config(''))
 
 #%% Add targets to features as a new column
 # dataset['features']['targets'] = dataset['targets']

@@ -5,7 +5,7 @@ from unittest import TestCase
 import numpy as np
 import sklearn
 
-from config_loader import read_config
+from config import read_config
 from dataset import reactome
 
 

@@ -1,7 +1,7 @@
 import os
 from unittest import TestCase
 
-from config_loader import append_relative_path, read_config
+from config import append_relative_path, read_config
 
 
 class Test_config(TestCase):

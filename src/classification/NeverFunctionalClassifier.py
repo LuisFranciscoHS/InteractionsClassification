@@ -8,3 +8,6 @@ class NeverFunctionalClassifier(BaseEstimator):
 
     def predict(self, X):
         return np.zeros((len(X), 1), dtype=bool)
+
+    def predict_proba(self, X):
+        return 0.0

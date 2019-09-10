@@ -1,0 +1,81 @@
+Stochastic Gradient Descent Classifier:
+  'precision', 'predicted', average, warn_for)
+                precision    recall  f1-score   support
+non-functional       0.78      1.00      0.88    200019
+    functional       0.00      0.00      0.00     56696
+      accuracy                           0.78    256715
+     macro avg       0.39      0.50      0.44    256715
+  weighted avg       0.61      0.78      0.68    256715
+
+Random Forest Classifier:
+                precision    recall  f1-score   support
+non-functional       0.78      1.00      0.88    200019
+    functional       0.74      0.00      0.00     56696
+      accuracy                           0.78    256715
+     macro avg       0.76      0.50      0.44    256715
+  weighted avg       0.77      0.78      0.68    256715
+
+Gaussian Naive Bayes:
+                precision    recall  f1-score   support
+non-functional       0.93      0.73      0.82    200019
+    functional       0.46      0.82      0.59     56696
+      accuracy                           0.75    256715
+     macro avg       0.70      0.77      0.71    256715
+  weighted avg       0.83      0.75      0.77    256715
+
+Never Functional:
+  'precision', 'predicted', average, warn_for)
+                precision    recall  f1-score   support
+non-functional       0.78      1.00      0.88    200019
+    functional       0.00      0.00      0.00     56696
+      accuracy                           0.78    256715
+     macro avg       0.39      0.50      0.44    256715
+  weighted avg       0.61      0.78      0.68    256715
+
+
+Stochastic Gradient Descent Classifier:
+[[199948     71]
+ [ 56625     71]]
+
+Random Forest Classifier:
+[[199945     74]
+ [ 56633     63]]
+
+Gaussian Naive Bayes:
+[[146613  53406]
+ [ 10458  46238]]
+
+Never Functional:
+[[200019      0]
+ [ 56696      0]]
+
+
+
+
+Random forest
+RandomizedSearchCV took 2651.40 seconds for 100 candidates parameter settings.
+Best parameters: 
+{'bootstrap': False, 'criterion': 'gini', 'max_depth': 3, 'max_features': 3, 'min_samples_split': 2}
+Best score: 
+0.779194826949176
+    mean_fit_time  std_fit_time  ...  std_test_score  rank_test_score
+0        4.225121      0.154434  ...        0.001661               69
+1        0.791351      0.139751  ...        0.000079                5
+2        0.571368      0.022222  ...        0.000040                3
+3        2.866641      0.119692  ...        0.001594               82
+4        0.940180      0.045044  ...        0.000152               19
+..            ...           ...  ...             ...              ...
+95       0.549431      0.012404  ...        0.000044               10
+96       6.903368      0.257509  ...        0.001604               89
+97       2.954416      0.120145  ...        0.001759               61
+98       2.504913      0.120814  ...        0.001681               65
+99       4.794090      0.161647  ...        0.001586              100
+[100 rows x 23 columns]
+Feature importances:
+ [1.98737036e-01 4.32628436e-01 3.62248998e-01 6.19004069e-03 1.95489035e-04 0.00000000e+00 0.00000000e+00]
+Confusion matrix: 
+[[199788    231]
+ [ 56493    203]]
+Precision score:  0.46774193548387094
+Recall score:  0.003580499506137999
+F1 score:  0.007106598984771574

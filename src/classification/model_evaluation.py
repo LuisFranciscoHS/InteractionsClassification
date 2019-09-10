@@ -1,4 +1,4 @@
-#%% Trained Model evaluation functions
+# %% Trained Model evaluation functions
 
 import os, sys
 import numpy as np
@@ -7,12 +7,15 @@ import joblib
 from sklearn.metrics import mean_squared_error, classification_report, precision_recall_curve, roc_curve
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import cross_val_score, cross_val_predict
+
+import config
 from dataset.dataset_loader import get_train_and_test_X_y
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import make_scorer
 import matplotlib.pyplot as plt
 
-#%%
+
+# %%
 def get_rmse(clf, X_test, y_test):
     predictions = clf.predict(X_test)
     mse = mean_squared_error(y_test, predictions)
@@ -47,7 +50,8 @@ def get_multiple_cross_val_scores(models, X, y, score, cv=5):
          returns: pandas dataframe with all the rmses. Rows are sizes, columns are models
 
          Note: High score values are better than low values"""
-    data = {model_name: [cross_val_score(model, X, y, scoring=score, cv=cv).mean()] for model_name, model in models.items()}
+    data = {model_name: [cross_val_score(model, X, y, scoring=score, cv=cv).mean()] for model_name, model in
+            models.items()}
     return pd.DataFrame(data, index=['mean'])
 
 
@@ -77,9 +81,25 @@ def plot_precision_vs_recall(precisions, recalls):
     plt.ylabel("Precision", fontsize=16)
     plt.axis([0, 1, 0, 1])
 
+def plot_roc_curve(y_train, y_scores):
+    fpr, tpr, thresholds = roc_curve(y_train, y_scores[model_name])
+    plt.figure()
+    lw = 2
+    plt.plot(fpr, tpr, color='darkorange', lw=lw, label='ROC curve (area = %0.2f)' % roc_auc_score(y_train, y_scores))
+    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic')
+    plt.legend(loc="lower right")
+    save_fig(figures_path, model_name.replace(" ", "_") + "roc_curve_plot")
+    plt.show()
 
-#%% Set script configuration
+
+# %% Set script configuration
 print(f"Working directory: {os.getcwd()}")
+path_to_root = "../"
 if os.getcwd().endswith("InteractionsClassification"):
     os.chdir(os.getcwd() + "\\src")
 search_path = os.getcwd().replace(f"\classification", "")
@@ -87,59 +107,65 @@ if search_path not in sys.path:
     sys.path.append(search_path)
 for path in sys.path:
     print(path)
-figures_path = "../figures/"
+figures_path = path_to_root + "figures/"
 print("Figures saved to: ", figures_path)
-models_path = "../models/"
+models_path = path_to_root + "models/tuned/"
 
-#%% Read the dataset and split train and test
-X_train, X_test, y_train, y_test = get_train_and_test_X_y("../")
+# %% Read the dataset and split train and test
+X_train, X_test, y_train, y_test = get_train_and_test_X_y(path_to_root)
 
-#%% Read models
-model_names = [
-    "stochastic gradient descent",
-    #"linear svc",
-    #"naive bayes",
-    #"nearest neighbors",
-    #"random forest",
-    #"never_functional"
-    #"support_vector_classifier"
+# %% Read models
+selected_names = [
+    "stochastic gradient descent classifier",
+    "random forest classifier",
+    # "k nearest neighbors classifier",
+    # "radius neighbors classifier",
+    "gaussian naive bayes",
+    "never functional",
+    # "support vector classifier"
 ]
-models = {model_name: joblib.load(models_path + model_name.replace(" ", "_") + ".pkl") for model_name in model_names}
+models = {model_name: joblib.load(models_path + model_name.replace(" ", "_") + ".pkl") for model_name in selected_names}
+
+# %% Calculate prediction scores
+y_scores = {}
+for model_name, model in models.items():
+    if model_name == "stochastic gradient descent classifier":
+        y_scores[model_name] = model.decision_function(X_train)
+    else:
+        y_scores[model_name] = model.predict_proba(X_train)
 
 # %% Basic evaluation: Root mean squared error
 sample_sizes = [5, 100, 1000, 10000]
-df_rmse = get_multiple_rmse(models, X_train, y_train, sample_sizes)
+df_rmse = get_multiple_rmse(models, pd.DataFrame(X_train), pd.DataFrame(y_train), sample_sizes)
 df_rmse
 
 # %% ## Show confussion matrix
 for model_name, model in models.items():
     print(f"\n{model_name.title()}:")
-    y_pred = cross_val_predict(model, X_train, y_train, cv=5)
+    y_pred = cross_val_predict(model, X_train, y_train, cv=config.cv)
     print(confusion_matrix(y_train, y_pred))
 
-#%% Cross-Validation: Accuracy
+# %% Cross-Validation: Accuracy
 print(f"Cross-validation for 'accuracy':")
-get_multiple_cross_val_scores(models, X_train, y_train, 'accuracy', 5)
+get_multiple_cross_val_scores(models, X_train, y_train, 'accuracy', config.cv)
 
-#%% Cross-Validation: Precision
+# %% Cross-Validation: Precision
 print(f"Cross-validation for 'precision':")
 get_multiple_cross_val_scores(models, X_train, y_train, 'precision')
 
-#%% Cross-Validation: True positives
+# %% Cross-Validation: True positives
 print(f"Cross-validation for 'true positive':")
 get_multiple_cross_val_scores(models, X_train, y_train, make_scorer(tp))
 
-#%%
+# %%
 for model_name, model in models.items():
     print(f"\n{model_name.title()}:")
     y_pred = model.predict(X_train)
     # Print the precision, recall and f1-score for micro, macro and weighted avg for each class
     print(classification_report(y_train, y_pred, target_names=['non-functional', 'functional']))
 
-#%% Calculate prediction scores
-y_scores = {model_name: model.decision_function(X_train) for model_name, model in models.items()}
 
-#%% Show precision-recall vs threshold curve and precision vs recall curve
+# %% Show precision-recall vs threshold curve and precision vs recall curve
 for model_name, model in models.items():
     print(f"\n{model_name.title()}:")
     precisions, recalls, thresholds = precision_recall_curve(y_train, y_scores[model_name])
@@ -157,21 +183,14 @@ for model_name, model in models.items():
     save_fig(figures_path, model_name.replace(" ", "_") + "_precision_vs_recall_plot")
     plt.show()
 
-#%% Show ROC curve
-plt.figure(figsize=(8, 6))
-for model_name, model in models.items():
-    print(f"\n{model_name.title()}:")
-    fpr, tpr, thresholds = roc_curve(y_train, y_scores[model_name])
-    plt.plot(fpr, tpr, "b:", linewidth=2, label="SGD")
-plt.plot([0, 1], [0, 1], 'k--')
-plt.axis([0, 1, 0, 1])
-plt.xlabel('False Positive Rate', fontsize=16)
-plt.ylabel('True Positive Rate', fontsize=16)
-save_fig(figures_path, "roc_curve_plot")
-plt.show()
+# %% Show ROC curve
+from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_auc_score
 
-#%% Show ROC AUC scores
+for model_name, model in models.items():
+    plot_roc_curve()
+
+# %% Show ROC AUC scores
 print("-- ROC AUC scores")
 for model_name, model in models.items():
     print(f"\n{model_name.title()}: {roc_auc_score(y_train, y_scores[model_name])}")
-

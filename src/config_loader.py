@@ -13,7 +13,7 @@ def read_config(path_config):
                 continue
             (key, value) = line.split()
             config[key] = value
-    paths = [key for key in config.keys() if 'PATH' in key]
+    paths = [key for key in config.keys() if 'PATH_' in key]
     append_relative_path(config, path_config, paths)
     print("\nConfiguration READY")
     return config

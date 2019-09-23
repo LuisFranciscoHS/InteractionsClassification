@@ -25,9 +25,8 @@ def create_pathwaymatcher_files(path_swissprot, file_swissprot_proteins, url_swi
         # Download PathwayMatcher executable
         download_if_not_exists(path_pathwaymatcher, file_pathwaymatcher, url_pathwaymatcher, 'PathwayMatcher')
 
-        subprocess.run(
-            f"java -jar {path_pathwaymatcher}{file_pathwaymatcher} match-uniprot -i {path_swissprot}{file_swissprot_proteins} -o {path_reactome} -gu",
-            capture_output=True)
+        command = f"java -jar {path_pathwaymatcher}{file_pathwaymatcher} match-uniprot -i {path_swissprot}{file_swissprot_proteins} -o {path_reactome} -gu";
+        os.system(command)
 
         # Remove extra PathwayMatcher result files
         extra_files = "analysis.tsv", "proteinExternalEdges.tsv", "proteinVertices.tsv", "search.tsv"

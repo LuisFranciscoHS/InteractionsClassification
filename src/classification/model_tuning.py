@@ -60,8 +60,7 @@ def tune_models(path_to_root, selected_models, X_train, y_train):
 if __name__ == '__main__':
     selected_models = [
         "stochastic gradient descent classifier",
-        "random forest classifier",
-        # "k nearest neighbors classifier",
+        "random forest classifier""k nearest neighbors classifier",
         # "radius neighbors classifier",
         # "gaussian process classifier",
         # "gaussian naive bayes",

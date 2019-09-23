@@ -11,7 +11,7 @@ from sklearn.gaussian_process.kernels import ConstantKernel, \
     WhiteKernel, PairwiseKernel, RationalQuadratic
 from classification.NeverFunctionalClassifier import NeverFunctionalClassifier
 
-n_iter_search = 100
+n_iter_search = 1000
 cv = 10
 
 parameters_stochastic_gradient_descent_classifier = {

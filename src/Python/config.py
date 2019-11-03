@@ -9,7 +9,31 @@ from scipy.stats import randint as sp_randint, stats, rv_continuous
 from sklearn.gaussian_process.kernels import ConstantKernel, \
     CompoundKernel, DotProduct, Sum, \
     WhiteKernel, PairwiseKernel, RationalQuadratic
-from classification.NeverFunctionalClassifier import NeverFunctionalClassifier
+
+PATH_SWISSPROT = "data/UniProt/"
+FILE_SWISSPROT_PROTEINS = "swissprot_human_proteins.tab"
+URL_SWISSPROT_PROTEINS =  "https://www.uniprot.org/uniprot/?query=reviewed:yes+AND+organism:9606"
+PATH_BIOGRID = "data/Biogrid/"
+URL_BIOGRID_ALL = "https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-3.5.175/BIOGRID-ALL-3.5.175.tab2.zip"
+BIOGRID_ALL = "BIOGRID-ALL-3.5.175.tab2.zip"
+BIOGRID_GGIS = "BIOGRID-ORGANISM-Homo_sapiens-3.5.175.tab2"
+BIOGRID_PPIS = "human_protein_interactions.tab"
+BIOGRID_ENTREZ_TO_UNIPROT = "entrez_to_uniprot.tab"
+ID_MAPPING_BATCH_SIZE = 1000
+PATH_REACTOME = "data/Reactome/"
+REACTOME_INTERACTIONS = "proteinInternalEdges.tsv"
+REACTOME_PPIS = "ppis.tsv"
+PATH_TOOLS = "tools/"
+FILE_PATHWAYMATCHER = "PathwayMatcher.jar"
+URL_PATHWAYMATCHER = "https://github.com/PathwayAnalysisPlatform/PathwayMatcher/releases/latest/download/PathwayMatcher.jar"
+PATH_STRING = "data/String/"
+STRING_PROTEIN_NETWORK = "9606.protein.actions.v11.0.txt"
+URL_STRING_PROTEIN_NETWORK = "https://stringdb-static.org/download/protein.actions.v11.0/9606.protein.actions.v11.0.txt.gz"
+STRING_ID_MAP = "human.uniprot_2_string.2018.tsv"
+URL_STRING_ID_MAP  = "https://string-db.org/mapping_files/uniprot/human.uniprot_2_string.2018.tsv.gz"
+STRING_FEATURES = "string_features.csv"
+STRING_INTERACTIONS = "string_interactions.csv"
+STRING_TARGETS = "string_targets.csv"
 
 n_iter_search = 1000
 cv = 10
@@ -83,7 +107,6 @@ estimators = [
     KNeighborsClassifier(),
     RadiusNeighborsClassifier(),
     GaussianNB(),
-    NeverFunctionalClassifier(),
     SVC(gamma="scale")
 ]
 
@@ -99,6 +122,7 @@ parameters = [
 
 models = pd.DataFrame({'estimators': estimators, 'parameters': parameters}, index=names)
 models.index.name = "names"
+
 
 
 def read_config(path_config):

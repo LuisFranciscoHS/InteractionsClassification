@@ -1,8 +1,8 @@
 import os
 from unittest import TestCase
 
-from dictionaries import write_dictionary_one_to_one, read_dictionary_one_to_set, convert_tab_to_dict, write_dictionary_one_to_set, \
-    read_set_from_columns, get_intersection, flatten_dictionary, in_dictionary
+from src.Python.lib.dictionaries import read_dictionary_one_to_set, write_dictionary_one_to_one, convert_tab_to_dict, \
+    write_dictionary_one_to_set, read_set_from_columns, get_intersection, in_dictionary, flatten_dictionary
 
 
 class Test_dictionaries(TestCase):
@@ -304,8 +304,8 @@ class Test_read_set_column_values(TestCase):
 
     def test_flatten_dictionary(self):
         dictionary = {'A': {'a', 'b', 'c'},
-                       'B': {'b'},
-                       'C': {'c', 'd', 'e'}}
+                      'B': {'b'},
+                      'C': {'c', 'd', 'e'}}
         result = flatten_dictionary(dictionary)
         self.assertEqual(7, len(result), msg='Wrong number of elements in the list')
         self.assertIn(('A', 'a'), result, msg='Missing entry in the list')

@@ -1,5 +1,7 @@
 # Data files
 data/
+src/Python/examples/
+resources/
 
 # Tools
 tools/

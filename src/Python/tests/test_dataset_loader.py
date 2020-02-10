@@ -40,4 +40,23 @@ class Test_dataset_loader(unittest.TestCase):
         self.fail("Test not implemented")
 
     def test_read_swissprot_downloads_file_if_not_exists(self):
+        # Verify that the file does not exist
+
+        # Execute the method
         self.assertEquals(list, type(read_swissprot_proteins()), msg="The return type was not correct.")
+
+        # Verify that the file was created
+
+        # Check file has expected format
+        # Check file has expected number of proteins
+
+        # Remove file to end the test
+        self.fail("Test not implemented")
+
+    def test_read_swissprot_list_has_correct_types(self):
+        self.fail("Test not implemented")
+
+    def test_read_swissprot_list_has_correct_proteins(self):
+        self.fail("Test not implemented")
+
+# Check only

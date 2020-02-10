@@ -13,8 +13,7 @@ from src.Python import dataset_loader
 def main():
     print(f"Working directory: {os.getcwd()}")
     # Read dataset
-    dataset = dataset_loader.load(PATH_SWISSPROT, FILE_SWISSPROT_PROTEINS, URL_SWISSPROT_PROTEINS,
-                                  PATH_REACTOME, REACTOME_INTERACTIONS, )
+    dataset = dataset_loader.load()
 
     # Explore the shape of the data
     ## - Density plots of length, mass, how many proteins are in each location

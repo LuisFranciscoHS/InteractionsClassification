@@ -2,6 +2,7 @@
 data/
 src/Python/examples/
 resources/
+*_example*
 
 # Tools
 tools/

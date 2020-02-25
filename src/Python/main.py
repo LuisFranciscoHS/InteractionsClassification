@@ -3,11 +3,9 @@
 # Executes machine learning classification methods to decide if experimental
 # protein interactions can be functional as those participating in biological pathways.
 import os
-import sys
-
 
 #%%
-from src.Python import dataset_loader
+from src.Python.datasets import dataset_loader
 
 
 def main():
@@ -24,7 +22,7 @@ def main():
     ## similar for non-interaction
 
     # Create models
-    ## Split dataset into: train and tests,
+    ## Split dataset into: train and tests
 
 
     # Train models

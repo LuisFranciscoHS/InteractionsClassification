@@ -1,7 +1,6 @@
-import os
 import unittest
 
-from src.Python.dataset_loader import read_swissprot_proteins
+from src.Python.datasets.dataset_loader import read_swissprot_proteins
 
 
 class Test_dataset_loader(unittest.TestCase):

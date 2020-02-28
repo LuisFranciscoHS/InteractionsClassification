@@ -20,6 +20,8 @@ PATH_REACTOME = "resources/reactome/"
 REACTOME_INTERACTIONS = "proteinInternalEdges.tsv"
 REACTOME_PPIS = "ppis.tsv"
 
+FILE_INTACT_PPIS = "resources/intact/intact.txt"
+
 PATH_BIOGRID = "resources/Biogrid/"
 URL_BIOGRID_ALL = "https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-3.5.175/BIOGRID-ALL-3.5.175.tab2.zip"
 BIOGRID_ALL = "BIOGRID-ALL-3.5.175.tab2.zip"

@@ -63,13 +63,21 @@ def get_ppis(examples=10,
 
     ppi_subset = {}
     example = 0
-    for key, values in ppis.items():
-        for value in values:
-            if example < len(ppis.keys()) and example < examples:
+
+    if examples > 8000:
+        for key, values in ppis.items():
+            for value in values:
                 ppi_subset.setdefault(key.strip(), set()).add(value.strip())
                 example += 1
-            else:
+                if example >= examples:
+                    break
+            if example >= examples:
                 break
+    else:
+        random.seed(77)
+        keys = random.sample(list(ppis.keys()), int(examples))
+        for key in keys:
+            ppi_subset.setdefault(key.strip(), set()).add(random.sample(ppis[key], 1)[0].strip())
 
     print("Reactome interactions READY")
     return ppi_subset

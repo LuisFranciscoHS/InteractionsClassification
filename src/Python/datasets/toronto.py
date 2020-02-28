@@ -18,7 +18,7 @@ def set_column(X, ref_ppis, label):
 
     result = []
     for index, row in X.iterrows():
-        if row[0] in ref_ppis and row[1] in ref_ppis[row[0]]:
+        if row[0] in ref_ppis.keys() and row[1] in ref_ppis[row[0]]:
             result.append(1)
         else:
             result.append(0)
@@ -40,11 +40,6 @@ def load_data(test_size=0.5, num_ppis=100):
         * X_test (N*test_size examples, 7 features), y_test (N*test_size labels):
 
     """
-
-    # Initialize dataset with the correct size
-    X = np.ones((num_ppis, 7))
-    y = np.ones((num_ppis,))
-
     num_positive_ppis = num_negative_ppis = num_ppis / 2
     if num_ppis % 2 == 1:
         num_positive_ppis += 1
@@ -56,10 +51,13 @@ def load_data(test_size=0.5, num_ppis=100):
 
     ppis = pd.concat([reactome_ppis_flat, random_ppis])
 
-    set_column(ppis, intact.get_ppis(), "Human PPI")
-    ppis.drop(ppis.columns[[0, 1]], axis=1)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=0)
-    return ((X_train, y_train), (X_test, y_test))
+    set_column(ppis, intact.get_ppis("9606"), "Human PPI")
+    set_column(ppis, intact.get_ppis("4932"), "Yeast PPI")
+
+    ppis.drop(ppis.columns[[0, 1]], axis=1, inplace=True)
+    y = np.concatenate((np.ones((int(num_positive_ppis),)), np.zeros((int(num_negative_ppis),))), axis=0)
+    # X = ppis.to_numpy()
+    return train_test_split(ppis, y, test_size=test_size, random_state=0)
 
 
 def save():

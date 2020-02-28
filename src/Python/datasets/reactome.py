@@ -1,6 +1,9 @@
 # Functions to download and read the PPIs from Reactome
 
 import os
+import random
+
+import pandas as pd
 
 from src.Python import config
 from src.Python.lib import dictionaries
@@ -70,3 +73,30 @@ def get_ppis(examples=10,
 
     print("Reactome interactions READY")
     return ppi_subset
+
+
+def get_random_ppis(n, ppis):
+    """ Create n protein pairs using the same proteins from the parameter interactions
+
+    :param n: number of protein pairs
+    :param ppis: Two-column Pandas DataFrame, one protein-protein interaction per row.
+    These contain the available proteins to make the new pairs.
+    :return: two column numpy array with n rows
+    """
+
+    # Create set of proteins
+    proteins = set()
+    for I in range(len(ppis)):
+        proteins.add(ppis.iloc[I, 0])
+        proteins.add(ppis.iloc[I, 1])
+
+    random_ppis = set()
+
+    while len(random_ppis) < n:
+        pair = random.sample(proteins, 2)
+        if pair[0] > pair[1]:
+            pair[0], pair[1] = pair[1], pair[0]
+        if (pair[0], pair[1]) not in random_ppis and ((ppis[0] != pair[0]) & (ppis[1] != pair[1])).any():
+            random_ppis.add((pair[0], pair[1]))
+
+    return pd.DataFrame(random_ppis)

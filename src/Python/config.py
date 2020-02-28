@@ -8,7 +8,7 @@ from sklearn.svm import SVC
 import os
 import sys
 
-PATH_SWISSPROT = "resources/UniProt/"
+PATH_SWISSPROT = "resources/uniprot/"
 FILE_SWISSPROT_PROTEINS = "swissprot_human_proteins.tab"
 URL_SWISSPROT_PROTEINS = "https://www.uniprot.org/uniprot/?query=reviewed:yes+AND+organism:9606"
 
@@ -16,7 +16,7 @@ PATH_TOOLS = "resources/tools/"
 FILE_PATHWAYMATCHER = "PathwayMatcher.jar"
 URL_PATHWAYMATCHER = "https://github.com/PathwayAnalysisPlatform/PathwayMatcher/releases/latest/download/PathwayMatcher.jar"
 
-PATH_REACTOME = "resources/Reactome/"
+PATH_REACTOME = "resources/reactome/"
 REACTOME_INTERACTIONS = "proteinInternalEdges.tsv"
 REACTOME_PPIS = "ppis.tsv"
 

@@ -1,10 +1,10 @@
 import os
 from zipfile import ZipFile
 
-from Python.lib import conversions
-from Python.lib.dictionaries import read_set_from_columns, read_dictionary_one_to_set, create_ppis_dictionary, \
+from Python.generic import conversions
+from Python.generic.dictionaries import read_set_from_columns, read_dictionary_one_to_set, create_ppis_dictionary, \
     write_dictionary_one_to_set
-from Python.lib.download import download_if_not_exists
+from Python.generic.download import download_if_not_exists
 
 
 def create_ggi_file(url, path_biogrid, filename_all, filename_ggis):

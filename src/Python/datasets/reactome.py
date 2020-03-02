@@ -6,8 +6,8 @@ import random
 import pandas as pd
 
 from src.Python import config
-from src.Python.lib import dictionaries
-from src.Python.lib.download import download_if_not_exists
+from src.Python.generic import dictionaries
+from src.Python.generic.download import download_if_not_exists
 
 
 def read_swissprot_proteins(path_swissprot, file_swissprot_proteins, url_swissprot):

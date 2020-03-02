@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 
 from src.Python.datasets import reactome
-from src.Python.lib import dictionaries
-from src.Python.lib.download import download_if_not_exists
+from src.Python.generic import dictionaries
+from src.Python.generic.download import download_if_not_exists
 
 
 def get_create_targets():

@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 
 from src.Python import config
 from src.Python.datasets import reactome, intact
-from src.Python.lib.dictionaries import flatten_dictionary
+from src.Python.generic.dictionaries import flatten_dictionary
 
 
 def set_column(X, ref_ppis, label):

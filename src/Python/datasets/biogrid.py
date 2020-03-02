@@ -1,6 +1,7 @@
 import os
 from zipfile import ZipFile
 
+from Python import config
 from Python.generic import conversions
 from Python.generic.dictionaries import read_set_from_columns, read_dictionary_one_to_set, create_ppis_dictionary, \
     write_dictionary_one_to_set
@@ -50,9 +51,26 @@ def create_gene_to_protein_mapping(path_biogrid, filename_ggis, url, filename_al
     print("Gene --> Protein mapping READY")
 
 
-def get_biogrid_interactions(path_biogrid, url, filename_all, filename_ggis, filename_ppis,
-                             filename_entrez_to_uniprot, batch_size=1000):
-    """Returns dictionary of Biogrid protein interactions enumerated"""
+def get_ppis(path_biogrid=config.PATH_BIOGRID,
+             url=config.URL_BIOGRID_ALL,
+             filename_all=config.BIOGRID_ALL,
+             filename_ggis=config.BIOGRID_HUMAN_GGIS,
+             filename_ppis=config.BIOGRID_HUMAN_PPIS,
+             filename_entrez_to_uniprot=config.BIOGRID_ENTREZ_TO_UNIPROT,
+             batch_size=1000):
+    """
+    Get of Biogrid protein protein interactions
+    It must convert the gene names to protein accessions.
+
+    :param path_biogrid:
+    :param url: To download the file
+    :param filename_all: original zipped interactions file
+    :param filename_ggis: original gene interactions file from Biogrid
+    :param filename_ppis: resulting ppi file after converting genes to proteins
+    :param filename_entrez_to_uniprot:
+    :param batch_size: for queries to the id mapping online service
+    :return: dictionary (one --> set)
+    """
     ppis = {}
     if not os.path.exists(path_biogrid + filename_ppis):
         print("Creating biogrid protein interaction file...")
@@ -64,10 +82,10 @@ def get_biogrid_interactions(path_biogrid, url, filename_all, filename_ggis, fil
                                        filename_entrez_to_uniprot, batch_size)
         entrez_to_uniprot = read_dictionary_one_to_set(path_biogrid, filename_entrez_to_uniprot)
 
-        # Create dictionary with converted unique protein pairs
         ppis = create_ppis_dictionary(ggis, entrez_to_uniprot)
         write_dictionary_one_to_set(ppis, path_biogrid, filename_ppis)
     else:
         ppis = read_dictionary_one_to_set(path_biogrid, filename_ppis, order_pairs=True)
     print("Biogrid protein interactions READY")
+
     return ppis

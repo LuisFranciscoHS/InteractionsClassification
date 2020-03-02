@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+from Python.datasets import biogrid
 from src.Python import config
 from src.Python.datasets import reactome, intact
 from src.Python.generic.dictionaries import flatten_dictionary
@@ -51,14 +52,21 @@ def load_data(test_size=0.5, num_ppis=100):
 
     ppis = pd.concat([reactome_ppis_flat, random_ppis])
 
-    set_column(ppis, intact.get_ppis("9606"), "Human PPI")
-    set_column(ppis, intact.get_ppis("4932"), "Yeast PPI")
+    set_column(ppis, intact.get_ppis("9606"), config.COL_HUMAN_INTACT)
+    set_column(ppis, biogrid.get_ppis(filename_ggis=config.BIOGRID_HUMAN_GGIS, filename_ppis=config.BIOGRID_HUMAN_PPIS),
+               config.COL_HUMAN_BIOGRID)
+    set_column(ppis, biogrid.get_ppis(filename_ggis=config.BIOGRID_FLY_GGIS, filename_ppis=config.BIOGRID_FLY_PPIS),
+               config.COL_FLY)
+    set_column(ppis, biogrid.get_ppis(filename_ggis=config.BIOGRID_WORM_GGIS, filename_ppis=config.BIOGRID_WORM_PPIS),
+               config.COL_WORM)
+    set_column(ppis, intact.get_ppis("4932"), config.COL_YEAST_INTACT)
+    set_column(ppis, biogrid.get_ppis(filename_ggis=config.BIOGRID_YEAST_GGIS, filename_ppis=config.BIOGRID_YEAST_PPIS),
+               config.COL_YEAST_BIOGRID)
 
     ppis.drop(ppis.columns[[0, 1]], axis=1, inplace=True)
     y = np.concatenate((np.ones((int(num_positive_ppis),)), np.zeros((int(num_negative_ppis),))), axis=0)
     X_train, X_test, y_train, y_test = train_test_split(ppis, y, test_size=test_size, random_state=0)
     return (X_train, X_test, y_train, y_test)
-
 
 
 if __name__ == "__main__":

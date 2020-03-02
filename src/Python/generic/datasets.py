@@ -3,6 +3,8 @@ import os
 import numpy as np
 import pandas as pd
 
+from Python import config
+
 
 def save(X_train, X_test, y_train, y_test, file_path, file_name):
     """Save dataset to csv file
@@ -18,7 +20,7 @@ def save(X_train, X_test, y_train, y_test, file_path, file_name):
 
     X = np.concatenate((X_train, X_test), axis=0)
     y = np.concatenate((y_train, y_test), axis=0)
-    df = pd.DataFrame(X, columns=["A", "B"])
+    df = pd.DataFrame(X, columns=[config.COL_HUMAN_INTACT, config.COL_HUMAN_BIOGRID, config.COL_FLY, config.COL_WORM, config.COL_YEAST_INTACT, config.COL_YEAST_BIOGRID])
     df["label"] = y
 
     if not os.path.exists(file_path):

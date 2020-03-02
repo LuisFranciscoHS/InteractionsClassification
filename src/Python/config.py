@@ -8,6 +8,17 @@ from sklearn.svm import SVC
 import os
 import sys
 
+COL_HUMAN_INTACT = "HUMAN PPI INTACT"
+COL_HUMAN_BIOGRID = "HUMAN PPI BIOGRID"
+COL_FLY = "FLY PPI BIOGRID"
+COL_WORM = "WORM PPI BIOGRID"
+COL_YEAST_INTACT = "YEAST PPI INTACT"
+COL_YEAST_BIOGRID = "YEAST PPI BIOGRID"
+COL_DOMAIN = "DOMAIN PPI"
+COL_COEXP = "COEXPRESSED"
+COL_GO = "GO BP SHARING"
+COL_LABEL = "TARGET"
+
 PATH_SWISSPROT = "resources/uniprot/"
 FILE_SWISSPROT_PROTEINS = "swissprot_human_proteins.tab"
 URL_SWISSPROT_PROTEINS = "https://www.uniprot.org/uniprot/?query=reviewed:yes+AND+organism:9606"
@@ -25,10 +36,16 @@ FILE_INTACT_PPIS = "intact.txt"
 URL_INTACT = "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact.zip"
 
 PATH_BIOGRID = "resources/biogrid/"
-URL_BIOGRID_ALL = "https://downloads.thebiogrid.org/BioGRID/Release-Archive/BIOGRID-3.5.181/BIOGRID-ALL-3.5.181.tab2.zip"
-BIOGRID_ALL = "BIOGRID-ALL-3.5.181.tab2.zip"
-BIOGRID_GGIS = "BIOGRID-ORGANISM-3.5.181.tab2.zip"
-BIOGRID_PPIS = "human_protein_interactions.tab"
+URL_BIOGRID_ALL = "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-ORGANISM-LATEST.tab2.zip"
+BIOGRID_ALL = "BIOGRID-ORGANISM-LATEST.tab2.zip"
+BIOGRID_HUMAN_GGIS = "BIOGRID-ORGANISM-Homo_sapiens-3.5.182.tab2.txt"
+BIOGRID_FLY_GGIS = "BIOGRID-ORGANISM-Drosophila_melanogaster-3.5.182.tab2.txt"
+BIOGRID_YEAST_GGIS = "BIOGRID-ORGANISM-Saccharomyces_cerevisiae_S288c-3.5.182.tab2.txt"
+BIOGRID_WORM_GGIS = "BIOGRID-ORGANISM-Caenorhabditis_elegans-3.5.182.tab2.txt"
+BIOGRID_HUMAN_PPIS = "Homo_sapiens_protein_interactions.tab"
+BIOGRID_FLY_PPIS = "Drosophila_melanogaster_protein_interactions.tab"
+BIOGRID_YEAST_PPIS = "Saccharomyces_cerevisiae_protein_interactions.tab"
+BIOGRID_WORM_PPIS = "Caenorhabditis_elegans_protein_interactions.tab"
 BIOGRID_ENTREZ_TO_UNIPROT = "entrez_to_uniprot.tab"
 ID_MAPPING_BATCH_SIZE = 1000
 

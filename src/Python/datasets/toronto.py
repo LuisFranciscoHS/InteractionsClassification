@@ -28,7 +28,7 @@ def set_column(X, ref_ppis, label):
 
 
 def load_data(test_size=0.5, num_ppis=100):
-    """PPI Dataset simmilar to the study from Ontario Institute for Cancer Research
+    """PPI Dataset similar to the study from Ontario Institute for Cancer Research
     (github.com/LuisFranciscoHS/InteractionsClassification/wiki/Toronto-Dataset)
 
     Args:
@@ -56,12 +56,9 @@ def load_data(test_size=0.5, num_ppis=100):
 
     ppis.drop(ppis.columns[[0, 1]], axis=1, inplace=True)
     y = np.concatenate((np.ones((int(num_positive_ppis),)), np.zeros((int(num_negative_ppis),))), axis=0)
-    # X = ppis.to_numpy()
-    return train_test_split(ppis, y, test_size=test_size, random_state=0)
+    X_train, X_test, y_train, y_test = train_test_split(ppis, y, test_size=test_size, random_state=0)
+    return (X_train, X_test, y_train, y_test)
 
-
-def save():
-    pass
 
 
 if __name__ == "__main__":

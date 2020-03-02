@@ -20,7 +20,9 @@ PATH_REACTOME = "resources/reactome/"
 REACTOME_INTERACTIONS = "proteinInternalEdges.tsv"
 REACTOME_PPIS = "ppis.tsv"
 
-FILE_INTACT_PPIS = "resources/intact/intact.txt"
+PATH_INTACT = "resources/intact/"
+FILE_INTACT_PPIS = "intact.txt"
+URL_INTACT = "ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psimitab/intact.zip"
 
 PATH_BIOGRID = "resources/biogrid/"
 URL_BIOGRID_ALL = "https://downloads.thebiogrid.org/BioGRID/Release-Archive/BIOGRID-3.5.181/BIOGRID-ALL-3.5.181.tab2.zip"
@@ -42,13 +44,16 @@ STRING_TARGETS = "string_targets.csv"
 n_iter_search = 1000
 cv = 10
 
+PATH_DATASETS = "resources/datasets/"
+FILE_DATASET_TORONTO = "toronto.csv"
+
 
 def set_root_wd():
     """Moves to one diretory above the location of the interpreter
 
     Assumes there is a virtual environment located <repo_root>/venv/
     """
-    os.chdir(os.path.dirname(os.path.abspath(sys.executable)) + "\\..\\..")
+    os.chdir(os.path.dirname(os.path.abspath(sys.executable)) + os.path.sep + ".." + os.path.sep + "..")
     print(f"Working directory: {os.getcwd()}")
 
 

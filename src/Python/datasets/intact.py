@@ -1,3 +1,7 @@
+import os
+import zipfile
+
+from Python.generic.download import download_if_not_exists
 from src.Python import config
 
 
@@ -7,8 +11,16 @@ def get_ppis(taxid, n=2000000):
 
     :return: dictionary one accession --> accession set
     """
+
+    if not os.path.exists(config.PATH_INTACT + config.FILE_INTACT_PPIS):
+        download_if_not_exists(config.PATH_INTACT, config.FILE_INTACT_PPIS, config.URL_INTACT,
+                           'Intact interactions')
+
+        with zipfile.ZipFile(config.PATH_INTACT + config.FILE_INTACT_PPIS, 'r') as zip_ref:
+            zip_ref.extractall(dir)
+
     ppis_dict = {}
-    with open(config.FILE_INTACT_PPIS, encoding='utf-8', errors='ignore') as f:
+    with open(config.PATH_INTACT + config.FILE_INTACT_PPIS, encoding='utf-8', errors='ignore') as f:
         line = f.readline()
         cont = 0
         for line in f:

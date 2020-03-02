@@ -33,7 +33,9 @@ def create_pathwaymatcher_files(path_swissprot, file_swissprot_proteins, url_swi
         extra_files = "analysis.tsv", "proteinExternalEdges.tsv", "proteinVertices.tsv", "search.tsv"
         [os.remove(f"{path_reactome}{file}") for file in extra_files if os.path.exists(f"{path_reactome}{file}")]
 
-        print(f"PathwayMatcher files READY")
+    print(path_reactome + file_reactome_internal_edges)
+
+    print(f"PathwayMatcher files READY")
 
 
 def get_ppis(examples=10,

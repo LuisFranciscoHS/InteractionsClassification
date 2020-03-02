@@ -22,10 +22,10 @@ REACTOME_PPIS = "ppis.tsv"
 
 FILE_INTACT_PPIS = "resources/intact/intact.txt"
 
-PATH_BIOGRID = "resources/Biogrid/"
-URL_BIOGRID_ALL = "https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-3.5.175/BIOGRID-ALL-3.5.175.tab2.zip"
-BIOGRID_ALL = "BIOGRID-ALL-3.5.175.tab2.zip"
-BIOGRID_GGIS = "BIOGRID-ORGANISM-Homo_sapiens-3.5.175.tab2"
+PATH_BIOGRID = "resources/biogrid/"
+URL_BIOGRID_ALL = "https://downloads.thebiogrid.org/BioGRID/Release-Archive/BIOGRID-3.5.181/BIOGRID-ALL-3.5.181.tab2.zip"
+BIOGRID_ALL = "BIOGRID-ALL-3.5.181.tab2.zip"
+BIOGRID_GGIS = "BIOGRID-ORGANISM-3.5.181.tab2.zip"
 BIOGRID_PPIS = "human_protein_interactions.tab"
 BIOGRID_ENTREZ_TO_UNIPROT = "entrez_to_uniprot.tab"
 ID_MAPPING_BATCH_SIZE = 1000

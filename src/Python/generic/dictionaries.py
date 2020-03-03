@@ -91,12 +91,35 @@ def in_dictionary(pairs, dictionary_one_to_set):
     return result
 
 
-def flatten_dictionary(dictionary):
+def flatten(dictionary):
     """Get a list of tuples with the key value pairs of the dictionary. """
     result = []
     for k, s in dictionary.items():
         for v in s:
             result.append((k, v))
+    return result
+
+
+def flatten_values(dictionary):
+    """Create a set of the values of the dictionary.
+
+    :param dictionary: one --> set dictionary
+    :return: set with the members of each value set of the dictionary
+    """
+    s = set()
+    for value in dictionary.values():
+        for member in value:
+            s.add(member)
+    return s
+
+
+def convert_dict_to_set(dictionary):
+    """Get a list of tuples with the key value pairs of the dictionary. """
+    result = set()
+    for k, s in dictionary.items():
+        for v in s:
+            result.add(k)
+            result.add(v)
     return result
 
 
@@ -116,3 +139,16 @@ def create_ppis_dictionary(interactions_with_old_id, id_mapping):
                             else:
                                 result.setdefault(to_new_id, set()).add(from_new_id)
     return result
+
+
+def invert(dictionary):
+    """ Create a new dictionary where each value of the dictionary becomes a key and viceversa
+
+    :param dictionary: one --> set dictionary
+    :return: inverted one --> set dictionary
+    """
+    new_dict = {}
+    for k, v in dictionary.items():
+        for value in v:
+            new_dict.setdefault(value, set()).add(k)
+    return new_dict

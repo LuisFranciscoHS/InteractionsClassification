@@ -20,7 +20,13 @@ def save(X_train, X_test, y_train, y_test, file_path, file_name):
 
     X = np.concatenate((X_train, X_test), axis=0)
     y = np.concatenate((y_train, y_test), axis=0)
-    df = pd.DataFrame(X, columns=[config.COL_HUMAN_INTACT, config.COL_HUMAN_BIOGRID, config.COL_FLY, config.COL_WORM, config.COL_YEAST_INTACT, config.COL_YEAST_BIOGRID])
+    df = pd.DataFrame(X, columns=[config.COL_HUMAN_INTACT,
+                                  config.COL_HUMAN_BIOGRID,
+                                  config.COL_FLY,
+                                  config.COL_WORM,
+                                  config.COL_YEAST_INTACT,
+                                  config.COL_YEAST_BIOGRID,
+                                  config.COL_COEXP])
     df["label"] = y
 
     if not os.path.exists(file_path):
@@ -40,3 +46,4 @@ def counts(df):
     for c in df.columns:
         print("---- %s ---" % c)
         print(df[c].value_counts())
+        print("--------\n")

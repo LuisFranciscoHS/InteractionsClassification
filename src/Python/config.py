@@ -46,8 +46,12 @@ BIOGRID_HUMAN_PPIS = "Homo_sapiens_protein_interactions.tab"
 BIOGRID_FLY_PPIS = "Drosophila_melanogaster_protein_interactions.tab"
 BIOGRID_YEAST_PPIS = "Saccharomyces_cerevisiae_protein_interactions.tab"
 BIOGRID_WORM_PPIS = "Caenorhabditis_elegans_protein_interactions.tab"
-BIOGRID_ENTREZ_TO_UNIPROT = "entrez_to_uniprot.tab"
+ENTREZ_TO_UNIPROT = "entrez_to_uniprot.tab"
+UNIPROT_TO_ENTREZ = "uniprot_to_entrez.tab"
 ID_MAPPING_BATCH_SIZE = 1000
+
+PATH_COXPRESDB = "resources/coxpresdb/"
+COXPRESDB_HUMAN = "Hsa-r.v18-12.G22897-S22897.combat_pca_subagging.mrgeo.d"
 
 PATH_STRING = "data/String/"
 STRING_PROTEIN_NETWORK = "9606.protein.actions.v11.0.txt"

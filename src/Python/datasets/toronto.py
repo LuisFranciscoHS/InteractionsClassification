@@ -2,10 +2,10 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from Python.datasets import biogrid
+from Python.datasets import biogrid, coxpresdb
 from src.Python import config
 from src.Python.datasets import reactome, intact
-from src.Python.generic.dictionaries import flatten_dictionary
+from src.Python.generic.dictionaries import flatten
 
 
 def set_column(X, ref_ppis, label):
@@ -46,7 +46,7 @@ def load_data(test_size=0.5, num_ppis=100):
         num_positive_ppis += 1
 
     reactome_ppis = reactome.get_ppis(num_positive_ppis)  # Dictionary object
-    reactome_ppis_flat = pd.DataFrame(flatten_dictionary(reactome_ppis))  # Pandas DataFrame
+    reactome_ppis_flat = pd.DataFrame(flatten(reactome_ppis))  # Pandas DataFrame
 
     random_ppis = reactome.get_random_ppis(num_negative_ppis, reactome_ppis_flat)  # Pandas DataFrame
 
@@ -62,6 +62,7 @@ def load_data(test_size=0.5, num_ppis=100):
     set_column(ppis, intact.get_ppis("4932"), config.COL_YEAST_INTACT)
     set_column(ppis, biogrid.get_ppis(filename_ggis=config.BIOGRID_YEAST_GGIS, filename_ppis=config.BIOGRID_YEAST_PPIS),
                config.COL_YEAST_BIOGRID)
+    set_column(ppis, coxpresdb.get_ppis(reactome_ppis, 5000.0), config.COL_COEXP)
 
     ppis.drop(ppis.columns[[0, 1]], axis=1, inplace=True)
     y = np.concatenate((np.ones((int(num_positive_ppis),)), np.zeros((int(num_negative_ppis),))), axis=0)
